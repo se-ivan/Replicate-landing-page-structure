@@ -52,8 +52,17 @@ const robots = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:la
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage} />
+    <!-- Favicon: SVG primary, with generic fallback -->
+    <link rel="icon" href="/logo.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon-32.png" sizes="32x32" />
+    <link rel="icon" href="/favicon-16.png" sizes="16x16" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon-192.png" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#1a2e1a" />
   </head>
   <body class={bodyClass}>
     <slot />
+    <script src="/js/scroll-reveal.js" defer></script>
   </body>
 </html>
