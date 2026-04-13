@@ -1,0 +1,75 @@
+---
+import { articles } from "../../data/articles";
+import { Navbar } from "../../app/components/Navbar";
+import { Footer } from "../../app/components/Footer";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const getReadingTime = (text: string) => {
+  const words = text.trim().split(/\s+/).length;
+  return Math.max(3, Math.round(words / 180));
+};
+
+const getArticleReadingTime = (article: (typeof articles)[number]) => {
+  const fullText = [article.intro, ...article.sections.flatMap((section) => section.paragraphs)].join(" ");
+  return getReadingTime(fullText);
+};
+---
+
+<BaseLayout
+  title="Artículos sobre Jubilación, Bienestar y Envejecimiento Activo"
+  description="Explora artículos de Plenitud Emocional sobre jubilación, salud mental, envejecimiento activo, prevención y apoyo a cuidadores."
+  image="/images/hero/hero-bg.jpg"
+  bodyClass="bg-[#f5f2ec] text-[#1a2e1a]"
+>
+  <Navbar sectionPrefix="/" client:load />
+
+    <header class="relative overflow-hidden text-white">
+      <img src="/images/hero/hero-bg.jpg" alt="Fondo" class="absolute inset-0 h-full w-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-b from-[#0f1a0fcc]/70 via-[#132214]/75 to-[#1a2e1a]/95"></div>
+      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-30 pb-18 md:pt-38 md:pb-28">
+        <a href="/" class="font-['Inter'] text-sm opacity-90 hover:opacity-100">Volver al inicio</a>
+        <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.05]">Biblioteca de Artículos</h1>
+        <p class="mt-5 max-w-3xl font-['Inter'] text-base md:text-lg text-white/90 leading-relaxed">
+          Lecturas para transitar esta etapa con claridad: emociones, envejecimiento activo, prevención y apoyo familiar.
+        </p>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-18">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-9">
+        {
+          articles.map((article) => (
+            <article class="group h-full overflow-hidden rounded-3xl bg-white/95 shadow-sm ring-1 ring-black/8 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+              <div class="relative h-60 md:h-72 overflow-hidden">
+                <img
+                  src={article.img}
+                  alt={article.title}
+                  class="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                />
+                <div class="absolute inset-0 bg-gradient-to-t from-black/45 via-black/10 to-transparent"></div>
+              </div>
+              <div class="p-6 md:p-7 flex flex-col">
+                <div class="flex items-center justify-between gap-3 font-['Inter'] text-xs text-[#1a2e1a]/60">
+                  <span>{getArticleReadingTime(article)} min de lectura</span>
+                  <span>Artículo</span>
+                </div>
+                <h2 class="mt-3 font-['Playfair_Display'] text-3xl leading-tight text-[#1a2e1a]">{article.title}</h2>
+                <p class="mt-3 font-['Inter'] text-[15px] md:text-base text-[#1a2e1a]/82 leading-relaxed">{article.desc}</p>
+                <div class="mt-4 flex flex-wrap gap-2">
+                  {article.tags.map((tag) => <span class="rounded-full bg-[#edf1e8] px-3 py-1 font-['Inter'] text-xs text-[#1a2e1a]">{tag}</span>)}
+                </div>
+                <a
+                  href={`/articulos/${article.id}`}
+                  class="mt-7 inline-flex w-fit items-center rounded-full bg-[#1a2e1a] px-5 py-2.5 font-['Inter'] text-sm text-white transition hover:bg-[#2c462c]"
+                >
+                  Leer artículo
+                </a>
+              </div>
+            </article>
+          ))
+        }
+      </div>
+    </main>
+
+  <Footer sectionPrefix="/" />
+</BaseLayout>

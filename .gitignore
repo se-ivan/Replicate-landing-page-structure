@@ -1,0 +1,38 @@
+### Node
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+### Build outputs
+dist/
+.astro/
+.vite/
+.cache/
+out/
+public/_astro/
+
+### System files
+.DS_Store
+Thumbs.db
+
+### Env
+.env
+.env.*.local
+
+### IDEs
+.vscode/
+.idea/
+
+### Logs
+*.log
+
+### Coverage and reports
+coverage/
+.nyc_output/
+
+### Misc
+.parcel-cache/
+.sass-cache/
+/.history/

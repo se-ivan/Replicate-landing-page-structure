@@ -1,0 +1,146 @@
+---
+import { articles } from "../../data/articles";
+import { Navbar } from "../../app/components/Navbar";
+import { Footer } from "../../app/components/Footer";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export function getStaticPaths() {
+  return articles.map((article) => ({
+    params: { id: article.id },
+    props: { article },
+  }));
+}
+
+const { article } = Astro.props;
+const related = articles.filter((item) => item.id !== article.id).slice(0, 3);
+
+const slugify = (value: string) =>
+  value
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s-]/g, "")
+    .trim()
+    .replace(/\s+/g, "-");
+
+const sectionLinks = article.sections.map((section) => ({
+  id: slugify(section.heading),
+  label: section.heading,
+}));
+
+const fullText = [article.intro, ...article.sections.flatMap((section) => section.paragraphs)].join(" ");
+const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length / 180));
+---
+
+<BaseLayout
+  title={`${article.title} | Artículos`}
+  description={article.desc}
+  image={article.img}
+  type="article"
+  bodyClass="bg-[#f5f2ec] text-[#1a2e1a]"
+>
+    <Navbar sectionPrefix="/" client:load />
+
+    <header class="relative min-h-[52vh] md:min-h-[58vh] overflow-hidden text-white">
+      <img src={article.img} alt={article.title} class="absolute inset-0 h-full w-full object-cover" />
+      <div class="absolute inset-0 bg-gradient-to-b from-black/72 via-black/52 to-[#1a2e1a]/90"></div>
+
+      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-30 pb-12 md:pt-38 md:pb-16">
+        <div class="max-w-3xl">
+          <a href="/articulos" class="font-['Inter'] text-sm text-white/90 hover:text-white">← Volver a artículos</a>
+          <div class="flex flex-wrap gap-2">
+            {article.tags.map((tag) => <span class="rounded-full border border-white/40 bg-white/10 px-3 py-1 font-['Inter'] text-xs">{tag}</span>)}
+          </div>
+          <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.06]">{article.title}</h1>
+          <div class="mt-5 flex flex-wrap items-center gap-4 font-['Inter'] text-sm text-white/85">
+            <span>{readingTime} min de lectura</span>
+            <span class="h-1 w-1 rounded-full bg-white/70"></span>
+            <span>Guía práctica para Morelia, Michoacán</span>
+          </div>
+          <p class="mt-5 font-['Inter'] text-base md:text-xl text-white/92 leading-relaxed">{article.intro}</p>
+        </div>
+      </div>
+    </header>
+
+    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-18">
+      <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_290px] lg:gap-10">
+        <article class="rounded-3xl bg-white p-6 md:p-10 lg:p-12 shadow-sm ring-1 ring-black/5">
+          <div class="space-y-10 md:space-y-12">
+            {
+              article.sections.map((section) => {
+                const sectionId = slugify(section.heading);
+                return (
+                  <section id={sectionId} class="scroll-mt-32 border-t border-[#1a2e1a]/12 pt-8 first:border-t-0 first:pt-0">
+                    <h2 class="font-['Playfair_Display'] text-3xl md:text-4xl text-[#1a2e1a] leading-tight">{section.heading}</h2>
+                    <div class="mt-5 space-y-5">
+                      {section.paragraphs.map((paragraph) => (
+                        <p class="font-['Inter'] text-[17px] md:text-[19px] leading-8 md:leading-9 text-[#1a2e1a]/84">{paragraph}</p>
+                      ))}
+                    </div>
+                  </section>
+                );
+              })
+            }
+          </div>
+        </article>
+
+        <aside class="hidden lg:block">
+          <div class="sticky top-28 space-y-4">
+            <div class="rounded-2xl bg-white p-5 ring-1 ring-black/6 shadow-sm">
+              <p class="font-['Inter'] text-xs uppercase tracking-[1.4px] text-[#1a2e1a]/60">En este artículo</p>
+              <ul class="mt-4 space-y-3">
+                {
+                  sectionLinks.map((section) => (
+                    <li>
+                      <a href={`#${section.id}`} class="font-['Inter'] text-sm text-[#1a2e1a]/80 hover:text-[#1a2e1a] transition">
+                        {section.label}
+                      </a>
+                    </li>
+                  ))
+                }
+              </ul>
+            </div>
+
+            <div class="rounded-2xl bg-[#1a2e1a] p-5 text-white">
+              <p class="font-['Playfair_Display'] text-2xl leading-tight">¿Necesitas orientación?</p>
+              <p class="mt-2 font-['Inter'] text-sm text-white/85 leading-relaxed">
+                Te acompañamos en procesos emocionales y preventivos para envejecer con dignidad.
+              </p>
+              <a href="/#contacto" class="mt-4 inline-flex rounded-full border border-white/45 px-4 py-2 font-['Inter'] text-sm hover:bg-white/10">
+                Agendar entrevista
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="mt-14 md:mt-20">
+        <div class="mb-8 flex items-center justify-between">
+          <h3 class="font-['Playfair_Display'] text-3xl text-[#1a2e1a]">Más artículos</h3>
+          <a href="/articulos" class="font-['Inter'] text-sm underline underline-offset-4 hover:opacity-70">Ir a biblioteca</a>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {
+            related.map((item) => (
+              <a
+                href={`/articulos/${item.id}`}
+                class="group overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-black/5 transition hover:shadow-lg hover:-translate-y-0.5"
+              >
+                <div class="relative h-48 overflow-hidden">
+                  <img src={item.img} alt={item.title} class="h-full w-full object-cover transition duration-500 group-hover:scale-105" />
+                  <div class="absolute inset-0 bg-gradient-to-t from-black/55 to-transparent"></div>
+                </div>
+                <div class="p-5">
+                  <p class="font-['Inter'] text-lg font-semibold text-[#1a2e1a] leading-snug">{item.title}</p>
+                  <p class="mt-2 font-['Inter'] text-sm text-[#1a2e1a]/75">{item.desc}</p>
+                </div>
+              </a>
+            ))
+          }
+        </div>
+      </section>
+    </main>
+
+    <Footer sectionPrefix="/" />
+</BaseLayout>
