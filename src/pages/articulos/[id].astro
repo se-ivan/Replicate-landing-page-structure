@@ -45,7 +45,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
       <img src={article.img} alt={article.title} class="absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-b from-black/72 via-black/52 to-[#1a2e1a]/90"></div>
 
-      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-30 pb-12 md:pt-38 md:pb-16">
+      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-12 pb-12 md:pt-20 md:pb-16">
         <div class="max-w-3xl">
           <a href="/articulos" class="font-['Inter'] text-sm text-white/90 hover:text-white">← Volver a artículos</a>
           <div class="flex flex-wrap gap-2">
@@ -62,9 +62,9 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
       </div>
     </header>
 
-    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-18">
+    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-20">
       <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_290px] lg:gap-10">
-        <article class="rounded-3xl bg-white p-6 md:p-10 lg:p-12 shadow-sm ring-1 ring-black/5">
+        <article class="rounded-3xl bg-white p-6 md:p-10 lg:p-14 shadow-sm ring-1 ring-black/5">
           <div class="space-y-10 md:space-y-12">
             {
               article.sections.map((section) => {
@@ -74,7 +74,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
                     <h2 class="font-['Playfair_Display'] text-3xl md:text-4xl text-[#1a2e1a] leading-tight">{section.heading}</h2>
                     <div class="mt-5 space-y-5">
                       {section.paragraphs.map((paragraph) => (
-                        <p class="font-['Inter'] text-[17px] md:text-[19px] leading-8 md:leading-9 text-[#1a2e1a]/84">{paragraph}</p>
+                        <p class="font-['Inter'] text-base md:text-lg leading-7 md:leading-8 text-[#1a2e1a]/85">{paragraph}</p>
                       ))}
                     </div>
                   </section>
