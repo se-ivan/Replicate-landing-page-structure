@@ -2,7 +2,7 @@ import { Star } from "lucide-react";
 
 export function TestimonialSection() {
   return (
-    <section className="bg-[#1a2e1a] text-white py-20 px-6 md:px-12 lg:px-20">
+    <section className="bg-[#1a2e1a] text-white py-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="320">
       <div className="max-w-4xl mx-auto text-center">
         {/* Decorative images */}
         <div className="flex justify-center gap-4 mb-8">

@@ -4,7 +4,7 @@ export function CTASection() {
   const whatsappHref = "https://wa.me/524431399471";
 
   return (
-    <section id="contacto" className="bg-[#1a2e1a] py-20 px-6 md:px-12 lg:px-20">
+    <section id="contacto" className="bg-[#1a2e1a] py-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="480">
       <div className="max-w-7xl mx-auto">
         <h2 className="font-['Playfair_Display'] text-4xl md:text-5xl text-white leading-tight text-center mb-14">
           CONTÁCTANOS

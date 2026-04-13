@@ -26,7 +26,7 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
     <header class="relative overflow-hidden text-white">
       <img src="/images/hero/hero-bg.jpg" alt="Fondo" class="absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-b from-[#0f1a0fcc]/70 via-[#132214]/75 to-[#1a2e1a]/95"></div>
-      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-30 pb-18 md:pt-38 md:pb-28">
+      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-24 pb-16 md:pt-32 md:pb-24">
         <a href="/" class="font-['Inter'] text-sm opacity-90 hover:opacity-100">Volver al inicio</a>
         <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.05]">Biblioteca de Artículos</h1>
         <p class="mt-5 max-w-3xl font-['Inter'] text-base md:text-lg text-white/90 leading-relaxed">
@@ -35,11 +35,11 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
       </div>
     </header>
 
-    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-18">
+    <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-20">
       <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-9">
         {
           articles.map((article) => (
-            <article class="group h-full overflow-hidden rounded-3xl bg-white/95 shadow-sm ring-1 ring-black/8 transition duration-300 hover:shadow-xl hover:-translate-y-1">
+            <article class="group h-full overflow-hidden rounded-3xl bg-white/95 shadow-sm ring-1 ring-black/10 transition duration-300 hover:shadow-xl hover:-translate-y-1">
               <div class="relative h-60 md:h-72 overflow-hidden">
                 <img
                   src={article.img}

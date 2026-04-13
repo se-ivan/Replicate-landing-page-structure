@@ -1,6 +1,6 @@
 export function HomeGardenSection() {
   return (
-    <section className="bg-[#f5f2ec] py-20 px-6 md:px-12 lg:px-20">
+    <section className="bg-[#f5f2ec] py-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="240">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
         {/* Left text */}
         <div>

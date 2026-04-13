@@ -45,10 +45,10 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
       <img src={article.img} alt={article.title} class="absolute inset-0 h-full w-full object-cover" />
       <div class="absolute inset-0 bg-gradient-to-b from-black/72 via-black/52 to-[#1a2e1a]/90"></div>
 
-      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-12 pb-12 md:pt-20 md:pb-16">
+      <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-24 pb-12 md:pt-32 md:pb-16">
         <div class="max-w-3xl">
           <a href="/articulos" class="font-['Inter'] text-sm text-white/90 hover:text-white">← Volver a artículos</a>
-          <div class="flex flex-wrap gap-2">
+          <div class="mt-4 flex flex-wrap gap-2">
             {article.tags.map((tag) => <span class="rounded-full border border-white/40 bg-white/10 px-3 py-1 font-['Inter'] text-xs">{tag}</span>)}
           </div>
           <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.06]">{article.title}</h1>
@@ -86,7 +86,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
 
         <aside class="hidden lg:block">
           <div class="sticky top-28 space-y-4">
-            <div class="rounded-2xl bg-white p-5 ring-1 ring-black/6 shadow-sm">
+            <div class="rounded-2xl bg-white p-5 ring-1 ring-black/10 shadow-sm">
               <p class="font-['Inter'] text-xs uppercase tracking-[1.4px] text-[#1a2e1a]/60">En este artículo</p>
               <ul class="mt-4 space-y-3">
                 {

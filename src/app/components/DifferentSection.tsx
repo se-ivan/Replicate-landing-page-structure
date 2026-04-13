@@ -9,7 +9,7 @@ const features = [
 
 export function DifferentSection() {
   return (
-    <section id="quienes-somos" className="bg-[#f5f2ec] py-20 px-6 md:px-12 lg:px-20">
+    <section id="quienes-somos" className="bg-[#f5f2ec] py-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="120">
       <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-stretch">
         {/* Left - Images */}
         <div className="flex gap-4 h-full items-stretch">

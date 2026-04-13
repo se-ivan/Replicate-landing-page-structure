@@ -7,7 +7,7 @@ const steps = [
 
 export function StepsSection() {
   return (
-    <section id="servicios" className="bg-[#1a2e1a] text-white py-20 px-6 md:px-12 lg:px-20">
+    <section id="servicios" className="bg-[#1a2e1a] text-white py-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="200">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between mb-12">
           <h2 className="font-['Playfair_Display'] text-4xl md:text-5xl leading-tight">

@@ -6,7 +6,7 @@ export function LatestWorksSection() {
   const [selected, setSelected] = useState(0);
 
   return (
-    <section id="blog" className="bg-[#f5f2ec] pt-20 pb-20 px-6 md:px-12 lg:px-20">
+    <section id="blog" className="bg-[#f5f2ec] pt-20 pb-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="400">
       <div className="max-w-[1220px] mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-10">
@@ -45,11 +45,16 @@ export function LatestWorksSection() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 via-50% to-transparent" />
 
                 {/* Arrow button */}
-                <div className="absolute top-5 right-5 z-10">
+                <a
+                  href={`/articulos/${a.id}`}
+                  onClick={(event) => event.stopPropagation()}
+                  aria-label={`Abrir artículo: ${a.title}`}
+                  className="absolute top-5 right-5 z-10"
+                >
                   <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-[#8aaf7e] transition">
                     <ArrowUpRight className="w-5 h-5 text-[#1a2e1a]" />
                   </div>
-                </div>
+                </a>
 
                 {/* Tags - only on active */}
                 <div
@@ -118,7 +123,7 @@ export function LatestWorksSection() {
               <div
                 key={a.title}
                 onClick={() => setSelected(i)}
-                className="relative rounded-3xl overflow-hidden cursor-pointer"
+                className="group relative rounded-3xl overflow-hidden cursor-pointer"
                 style={{
                   height: isActive ? "460px" : "250px",
                   transition: "height 0.5s cubic-bezier(0.4, 0, 0.2, 1)",
@@ -132,11 +137,16 @@ export function LatestWorksSection() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 via-50% to-transparent" />
 
                 {/* Arrow */}
-                <div className="absolute top-4 right-4 z-10">
-                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                <a
+                  href={`/articulos/${a.id}`}
+                  onClick={(event) => event.stopPropagation()}
+                  aria-label={`Abrir artículo: ${a.title}`}
+                  className="absolute top-4 right-4 z-10"
+                >
+                  <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center group-hover:bg-[#8aaf7e] transition">
                     <ArrowUpRight className="w-5 h-5 text-[#1a2e1a]" />
                   </div>
-                </div>
+                </a>
 
                 {/* Tags */}
                 <div
