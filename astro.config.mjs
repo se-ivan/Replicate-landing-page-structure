@@ -1,5 +1,7 @@
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
+import node from "@astrojs/node";
+import auth from "auth-astro";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 
@@ -16,7 +18,9 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
-  integrations: [react()],
+  output: "server",
+  adapter: node({ mode: "standalone" }),
+  integrations: [react(), auth()],
   vite: {
     plugins: [figmaAssetResolver(), tailwindcss()],
     resolve: {

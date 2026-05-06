@@ -42,20 +42,20 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
         <a href={sectionHref("#quienes-somos")} className="opacity-80 hover:opacity-100">Quiénes Somos</a>
         <a href={sectionHref("#servicios")} className="opacity-80 hover:opacity-100">Servicios</a>
         <a href="/psicologia" className="opacity-80 hover:opacity-100">Psicología</a>
+        <a href="/abogados" className="opacity-80 hover:opacity-100">Abogados</a>
         <a href={blogHref} className="opacity-80 hover:opacity-100">Blog</a>
         <a href={sectionHref("#contacto")} className="opacity-80 hover:opacity-100">Contacto</a>
+        <a href="/agendar" className="opacity-80 hover:opacity-100">Agendar Cita</a>
       </div>
       <a
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
+        href="/agendar"
         className={`hidden md:block rounded-full px-5 py-2 text-sm font-['Inter'] transition border ${
           scrolled
             ? "border-[#1a2e1a]/30 hover:bg-[#1a2e1a]/10"
             : "border-white/40 hover:bg-white/10"
         }`}
       >
-        Agenda una Entrevista
+        Agenda tu Cita
       </a>
       <button
         className="md:hidden"
@@ -76,18 +76,18 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
           <a href={sectionHref("#quienes-somos")} onClick={() => setOpen(false)}>Quiénes Somos</a>
           <a href={sectionHref("#servicios")} onClick={() => setOpen(false)}>Servicios</a>
           <a href="/psicologia" onClick={() => setOpen(false)}>Psicología</a>
+          <a href="/abogados" onClick={() => setOpen(false)}>Abogados</a>
           <a href={blogHref} onClick={() => setOpen(false)}>Blog</a>
           <a href={sectionHref("#contacto")} onClick={() => setOpen(false)}>Contacto</a>
+          <a href="/agendar" onClick={() => setOpen(false)}>Agendar Cita</a>
           <a
-            href={whatsappHref}
-            target="_blank"
-            rel="noopener noreferrer"
+            href="/agendar"
             className={`rounded-full px-5 py-2 border ${
               scrolled ? "border-[#1a2e1a]/25" : "border-white/40"
             }`}
             onClick={() => setOpen(false)}
           >
-            Agenda una Entrevista
+            Agenda tu Cita
           </a>
         </div>
       )}

@@ -3,6 +3,7 @@ import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 
 const links = [
+  { label: "Inicio", href: "/" },
   { label: "Acerca de", href: "#acerca" },
   { label: "Terapia grupal", href: "#terapia-grupal" },
   { label: "Terapia individual", href: "#terapia-individual" },
@@ -38,8 +39,8 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <a href="#inicio" className="flex items-center gap-3">
           <img
-            src={logo}
-            alt="/logo.svg"
+            src="/logo.svg"
+            alt="Logo"
             className={`transition-all duration-500 ${scrolled ? "h-9" : "h-11 brightness-0 invert"}`}
           />
           <div className="hidden sm:block leading-tight">

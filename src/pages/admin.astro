@@ -1,0 +1,13 @@
+---
+export const prerender = false;
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { AdminDashboard } from "../app/components/citas/AdminDashboard";
+---
+
+<BaseLayout
+  title="Panel de Administración — Citas"
+  description="Gestión de citas agendadas de Plenitud Emocional."
+  noindex={true}
+>
+  <AdminDashboard client:load />
+</BaseLayout>

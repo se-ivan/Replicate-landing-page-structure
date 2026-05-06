@@ -1,0 +1,31 @@
+---
+export const prerender = false;
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { AppointmentForm } from "../app/components/citas/AppointmentForm";
+---
+
+<BaseLayout
+  title="Agendar Cita"
+  description="Agenda tu cita de acompañamiento psicológico u orientación legal con Plenitud Emocional en Morelia, Michoacán."
+>
+  <div class="min-h-screen bg-[#f5f2ec]">
+    <!-- Simple Top Nav -->
+    <nav class="bg-white/80 backdrop-blur-sm border-b border-[#e5e0d8] px-6 py-4">
+      <div class="max-w-3xl mx-auto flex items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/logo.svg" alt="Plenitud Emocional" class="h-8" />
+        </a>
+        <a
+          href="/"
+          class="text-sm font-['Inter'] text-[#5a6b5a] hover:text-[#1a2e1a] transition-colors flex items-center gap-1"
+        >
+          ← Volver al inicio
+        </a>
+      </div>
+    </nav>
+
+    <div class="py-12 pb-20">
+      <AppointmentForm client:load />
+    </div>
+  </div>
+</BaseLayout>

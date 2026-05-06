@@ -1,0 +1,20 @@
+---
+export const prerender = false;
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { LoginForm } from "../app/components/citas/LoginForm";
+import { getSession } from "auth-astro/server";
+
+// If already logged in, redirect to admin
+const session = await getSession(Astro.request);
+if (session?.user) {
+  return Astro.redirect("/admin");
+}
+---
+
+<BaseLayout
+  title="Iniciar Sesión — Administración"
+  description="Acceso al panel de administración de Plenitud Emocional."
+  noindex={true}
+>
+  <LoginForm client:load />
+</BaseLayout>

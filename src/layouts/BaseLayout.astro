@@ -6,6 +6,7 @@ type SeoType = "website" | "article";
 interface Props {
   title: string;
   description: string;
+  keywords?: string;
   image?: string;
   type?: SeoType;
   noindex?: boolean;
@@ -15,6 +16,7 @@ interface Props {
 const {
   title,
   description,
+  keywords = "plenitud emocional, plenitudemocional, plenitudemocional.com, psicologia adultos mayores, abogados adultos mayores",
   image = "/images/hero/hero-bg.jpg",
   type = "website",
   noindex = false,
@@ -36,6 +38,7 @@ const robots = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:la
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{fullTitle}</title>
     <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
     <meta name="robots" content={robots} />
 
     {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
@@ -60,6 +63,18 @@ const robots = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:la
     <link rel="apple-touch-icon" href="/favicon-192.png" />
     <link rel="manifest" href="/site.webmanifest" />
     <meta name="theme-color" content="#1a2e1a" />
+
+    <!-- Google Structured Data (JSON-LD) -->
+    <script type="application/ld+json">
+      {`{
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Plenitud Emocional",
+        "url": "https://plenitudemocional.com",
+        "logo": "https://plenitudemocional.com/logo.svg",
+        "description": "Acompañamiento psicológico y orientación legal para personas adultas mayores y sus familias."
+      }`}
+    </script>
   </head>
   <body class={bodyClass}>
     <slot />
