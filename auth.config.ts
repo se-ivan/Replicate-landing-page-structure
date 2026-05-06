@@ -1,7 +1,7 @@
 import Credentials from "@auth/core/providers/credentials";
-import type { AuthConfig } from "@auth/core";
+import { defineConfig } from "auth-astro";
 
-export default {
+export default defineConfig({
   providers: [
     Credentials({
       credentials: {
@@ -29,4 +29,4 @@ export default {
   pages: {
     signIn: "/login",
   },
-} satisfies AuthConfig;
+});

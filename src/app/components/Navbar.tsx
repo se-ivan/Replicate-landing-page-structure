@@ -45,7 +45,6 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
         <a href="/abogados" className="opacity-80 hover:opacity-100">Abogados</a>
         <a href={blogHref} className="opacity-80 hover:opacity-100">Blog</a>
         <a href={sectionHref("#contacto")} className="opacity-80 hover:opacity-100">Contacto</a>
-        <a href="/agendar" className="opacity-80 hover:opacity-100">Agendar Cita</a>
       </div>
       <a
         href="/agendar"
