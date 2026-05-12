@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { motion } from "motion/react";
+import { signIn } from "auth-astro/client";
 
 export function LoginForm() {
   const [username, setUsername] = useState("");
@@ -14,48 +15,33 @@ export function LoginForm() {
     setError("");
 
     try {
-      // Use the Auth.js credentials sign-in flow
-      const res = await fetch("/api/auth/callback/credentials", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          username,
-          password,
-          redirect: "false",
-          callbackUrl: "/admin",
-          csrfToken: await getCsrfToken(),
-        }),
-        redirect: "manual",
+      const res = await signIn("credentials", {
+        username,
+        password,
+        redirect: false,
+        callbackUrl: "/admin",
       });
 
-      // Auth.js returns a redirect on success
-      if (res.status === 200 || res.type === "opaqueredirect" || res.redirected) {
-        window.location.href = "/admin";
+      // auth-astro redirects on success. A response here means Auth.js returned
+      // control to the form, usually because credentials were rejected.
+      if (!res) {
         return;
       }
 
-      // If we get here, auth failed
-      const text = await res.text();
-      if (res.status === 401 || text.includes("error")) {
+      const data = await res.json().catch(() => null);
+      const error = data?.url
+        ? new URL(data.url, window.location.origin).searchParams.get("error")
+        : null;
+
+      if (error) {
         setError("Credenciales incorrectas. Verifica tu usuario y contraseña.");
       } else {
-        // Sometimes a 200 means success even without redirect
         window.location.href = "/admin";
       }
     } catch {
       setError("Error de conexión. Intenta de nuevo.");
     } finally {
       setLoading(false);
-    }
-  };
-
-  const getCsrfToken = async (): Promise<string> => {
-    try {
-      const res = await fetch("/api/auth/csrf");
-      const data = await res.json();
-      return data.csrfToken || "";
-    } catch {
-      return "";
     }
   };
 
