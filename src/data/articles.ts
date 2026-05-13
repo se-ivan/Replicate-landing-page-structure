@@ -1,15 +1,23 @@
 export type ArticleSection = {
   heading: string;
+  navLabel?: string;
+  navLabels?: string[];
   paragraphs: string[];
 };
+
+export type ArticleAudience = "psicologia" | "legal" | "ambos";
 
 export type Article = {
   id: string;
   title: string;
   desc: string;
+  audience: ArticleAudience;
   tags: string[];
   img: string;
   intro: string;
+  readingTimeMinutes?: number | null;
+  headerMeta?: string;
+  tocTitle?: string;
   sections: ArticleSection[];
 };
 
@@ -18,6 +26,7 @@ export const articles: Article[] = [
     id: "envejecimiento-y-emociones",
     title: "Envejecimiento y Emociones",
     desc: "Comprender la adaptación emocional en la jubilación y la vejez ayuda a sostener bienestar y autonomía.",
+    audience: "ambos",
     tags: ["Psicología", "Jubilación", "Salud Mental"],
     img: "/images/articles/prepararte-jubilacion.png",
     intro:
@@ -50,6 +59,7 @@ export const articles: Article[] = [
     id: "envejecer-con-plenitud",
     title: "Envejecer con plenitud",
     desc: "La plenitud en esta etapa se construye con propósito, vínculos y participación activa en la comunidad.",
+    audience: "ambos",
     tags: ["Plenitud", "Resiliencia", "Envejecimiento Activo"],
     img: "/images/articles/protege-bienes.png",
     intro:
@@ -82,6 +92,7 @@ export const articles: Article[] = [
     id: "consejos-para-envejecer",
     title: "Consejos para envejecer",
     desc: "Acciones sencillas en casa y en hábitos diarios pueden mejorar seguridad, energía y confianza.",
+    audience: "ambos",
     tags: ["Bienestar", "Autonomía", "Prevención"],
     img: "/images/articles/cambio-identidad.png",
     intro:
@@ -114,6 +125,7 @@ export const articles: Article[] = [
     id: "apoyo-a-familiares-y-cuidadores",
     title: "Apoyo a familiares y cuidadores",
     desc: "Cuidar también implica cuidarse: apoyo, descanso y comunicación clara previenen el agotamiento.",
+    audience: "ambos",
     tags: ["Cuidadores", "Familia", "Autocuidado"],
     img: "/images/articles/derechos-salud.png",
     intro:

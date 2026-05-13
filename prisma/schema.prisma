@@ -1,0 +1,61 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AppointmentStatus {
+  pendiente
+  confirmada
+  completada
+  cancelada
+}
+
+enum ServiceType {
+  psicologia
+  legal
+  ambos
+}
+
+model Appointment {
+  id              String            @id @default(uuid())
+  nombre          String
+  apellido        String
+  fechaNacimiento String
+  telefono        String
+  email           String
+  fechaPreferida  String
+  horaPreferida   String
+  tipoServicio    ServiceType
+  notas           String            @default("")
+  estado          AppointmentStatus @default(pendiente)
+  creadoEn        DateTime          @default(now())
+  actualizadoEn   DateTime          @updatedAt
+
+  @@index([creadoEn])
+  @@index([fechaPreferida])
+  @@index([estado])
+}
+
+model Article {
+  id            String   @id
+  title         String
+  desc          String
+  audience      ServiceType @default(ambos)
+  tags          Json
+  img           String
+  intro         String
+  readingTimeMinutes Int?
+  headerMeta    String   @default("Guia practica para Morelia, Michoacan")
+  tocTitle      String   @default("En este articulo")
+  sections      Json
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@index([creadoEn])
+  @@index([actualizadoEn])
+  @@index([audience])
+}

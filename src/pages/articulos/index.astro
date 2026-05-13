@@ -1,17 +1,42 @@
 ---
-import { articles } from "../../data/articles";
+import { filterArticlesByExactAudience, getArticles } from "../../lib/articles";
+import type { Article, ArticleAudience } from "../../data/articles";
 import { Navbar } from "../../app/components/Navbar";
 import { Footer } from "../../app/components/Footer";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const prerender = false;
 
 const getReadingTime = (text: string) => {
   const words = text.trim().split(/\s+/).length;
   return Math.max(3, Math.round(words / 180));
 };
 
-const getArticleReadingTime = (article: (typeof articles)[number]) => {
+const getArticleReadingTime = (article: Article) => {
   const fullText = [article.intro, ...article.sections.flatMap((section) => section.paragraphs)].join(" ");
   return getReadingTime(fullText);
+};
+
+const requestedAudience = Astro.url.searchParams.get("categoria");
+const selectedAudience = ["ambos", "psicologia", "legal"].includes(requestedAudience || "")
+  ? requestedAudience as ArticleAudience
+  : null;
+const allArticles = await getArticles();
+const articles = selectedAudience
+  ? filterArticlesByExactAudience(allArticles, selectedAudience)
+  : allArticles;
+
+const audienceTabs: Array<{ label: string; href: string; active: boolean }> = [
+  { label: "Todos", href: "/articulos", active: !selectedAudience },
+  { label: "General", href: "/articulos?categoria=ambos", active: selectedAudience === "ambos" },
+  { label: "Psicologia", href: "/articulos?categoria=psicologia", active: selectedAudience === "psicologia" },
+  { label: "Abogados", href: "/articulos?categoria=legal", active: selectedAudience === "legal" },
+];
+
+const audienceLabel = (audience: ArticleAudience) => {
+  if (audience === "legal") return "Abogados";
+  if (audience === "psicologia") return "Psicologia";
+  return "General";
 };
 ---
 
@@ -36,6 +61,18 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
     </header>
 
     <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-20">
+      <div class="mb-8 flex flex-wrap gap-2">
+        {
+          audienceTabs.map((tab) => (
+            <a
+              href={tab.href}
+              class={`rounded-full px-4 py-2 font-['Inter'] text-sm transition ${tab.active ? "bg-[#1a2e1a] text-white" : "bg-white text-[#1a2e1a] ring-1 ring-black/10 hover:ring-[#1a2e1a]/30"}`}
+            >
+              {tab.label}
+            </a>
+          ))
+        }
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-9">
         {
           articles.map((article) => (
@@ -51,7 +88,7 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
               <div class="p-6 md:p-7 flex flex-col">
                 <div class="flex items-center justify-between gap-3 font-['Inter'] text-xs text-[#1a2e1a]/60">
                   <span>{getArticleReadingTime(article)} min de lectura</span>
-                  <span>Artículo</span>
+                  <span>{audienceLabel(article.audience)}</span>
                 </div>
                 <h2 class="mt-3 font-['Playfair_Display'] text-3xl leading-tight text-[#1a2e1a]">{article.title}</h2>
                 <p class="mt-3 font-['Inter'] text-[15px] md:text-base text-[#1a2e1a]/82 leading-relaxed">{article.desc}</p>

@@ -1,6 +1,11 @@
 ---
 import App from "../app/App";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getArticlesForExactAudience } from "../lib/articles";
+
+export const prerender = false;
+
+const articles = await getArticlesForExactAudience("ambos");
 ---
 
 <BaseLayout
@@ -9,5 +14,5 @@ import BaseLayout from "../layouts/BaseLayout.astro";
   keywords="plenitud emocional, plenitudemocional, plenitudemocional.com, psicólogos morelia, abogados adultos mayores, acompañamiento emocional"
   image="/images/hero/hero-bg.jpg"
 >
-  <App client:load />
+  <App articles={articles} client:load />
 </BaseLayout>

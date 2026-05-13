@@ -1,4 +1,6 @@
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
+import { ArticleHighlights } from "../ArticleHighlights";
+import type { Article } from "../../../data/articles";
 import {
   Scale,
   Feather,
@@ -11,6 +13,7 @@ import {
   Lock,
   BadgeCheck,
   Accessibility,
+  CalendarCheck,
   Phone,
   Mail,
   MapPin,
@@ -62,7 +65,11 @@ const garantias = [
   { icon: Accessibility, title: "Atención prioritaria", text: "Procesos accesibles diseñados para adultos mayores." },
 ];
 
-export default function App() {
+type Props = {
+  articles?: Article[];
+};
+
+export default function App({ articles = [] }: Props) {
   return (
     <div
       className="min-h-screen w-full"
@@ -95,14 +102,15 @@ export default function App() {
             <ul className="hidden md:flex items-center gap-10" style={{ fontSize: "0.9rem", fontWeight: 400 }}>                <li><a href="/" className="opacity-90 hover:opacity-100 cursor-pointer">Volver al Inicio</a></li>              <li className="opacity-90 hover:opacity-100 cursor-pointer">Inicio</li>
               <li className="opacity-90 hover:opacity-100 cursor-pointer">Áreas</li>
               <li className="opacity-90 hover:opacity-100 cursor-pointer">Proceso</li>
-              <li className="opacity-90 hover:opacity-100 cursor-pointer">Contacto</li>
+              <li><a href="/agendar" className="opacity-90 hover:opacity-100 cursor-pointer">Contacto</a></li>
             </ul>
-            <button
+            <a
+              href="/agendar"
               className="hidden md:inline-flex items-center px-5 py-2.5 rounded-full border border-white/25 hover:bg-white/10 transition"
               style={{ fontSize: "0.85rem", fontWeight: 500 }}
             >
               Consulta
-            </button>
+            </a>
           </nav>
 
           <div
@@ -139,12 +147,13 @@ export default function App() {
               </p>
 
               <div className="flex flex-wrap items-center gap-3 mb-12">
-                <button
+                <a
+                  href="/agendar"
                   style={{ backgroundColor: SECURITY_GREEN, fontWeight: 500 }}
                   className="text-white px-7 py-3.5 rounded-full hover:brightness-110 transition"
                 >
                   Solicitar consulta confidencial
-                </button>
+                </a>
                 <button
                   className="px-7 py-3.5 rounded-full border border-white/25 text-white hover:bg-white/10 transition"
                   style={{ fontWeight: 500 }}
@@ -335,11 +344,16 @@ export default function App() {
             </ul>
           </div>
 
-          <form
-            onSubmit={(e) => e.preventDefault()}
+          <div
             className="p-8 lg:p-10 rounded-2xl"
             style={{ backgroundColor: SOFT, border: `1px solid ${LINE}` }}
           >
+            <div
+              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full"
+              style={{ backgroundColor: WHITE, border: `1px solid ${LINE}` }}
+            >
+              <CalendarCheck className="h-6 w-6" style={{ color: SECURITY_GREEN }} strokeWidth={1.5} />
+            </div>
             <h3
               style={{ color: AUTHORITY_BLUE, fontWeight: 500, fontSize: "1.5rem", letterSpacing: "-0.01em" }}
               className="mb-2"
@@ -347,60 +361,51 @@ export default function App() {
               Inicie su consulta confidencial
             </h3>
             <p style={{ color: TRUST_GRAY, fontSize: "0.95rem", fontWeight: 400 }} className="mb-8">
-              Le contactaremos en menos de 24 horas hábiles.
+              Agenda una cita desde el formulario general para que podamos revisar tu caso legal y contactarte con la informacion necesaria.
             </p>
 
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Nombre completo"
-                className="w-full px-4 py-3.5 rounded-xl outline-none bg-white"
-                style={{ border: `1px solid ${LINE}`, color: AUTHORITY_BLUE, fontFamily: FONT, fontSize: "0.95rem" }}
-              />
-              <input
-                type="tel"
-                placeholder="Teléfono"
-                className="w-full px-4 py-3.5 rounded-xl outline-none bg-white"
-                style={{ border: `1px solid ${LINE}`, color: AUTHORITY_BLUE, fontFamily: FONT, fontSize: "0.95rem" }}
-              />
-              <select
-                className="w-full px-4 py-3.5 rounded-xl outline-none bg-white"
-                style={{ border: `1px solid ${LINE}`, color: AUTHORITY_BLUE, fontFamily: FONT, fontSize: "0.95rem" }}
-                defaultValue=""
-              >
-                <option value="" disabled>
-                  Método de contacto preferido
-                </option>
-                <option>Llamada telefónica</option>
-                <option>Email</option>
-              </select>
-              <textarea
-                rows={3}
-                placeholder="Tipo de consulta legal"
-                className="w-full px-4 py-3.5 rounded-xl outline-none resize-none bg-white"
-                style={{ border: `1px solid ${LINE}`, color: AUTHORITY_BLUE, fontFamily: FONT, fontSize: "0.95rem" }}
-              />
-              <button
-                type="submit"
+            <div className="space-y-4">
+              {[
+                "Selecciona asesoria legal o servicio integral.",
+                "Describe brevemente tu situacion.",
+                "Te contactaremos para confirmar la cita.",
+              ].map((item) => (
+                <div key={item} className="flex items-start gap-3">
+                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: SECURITY_GREEN }} />
+                  <p style={{ color: TRUST_GRAY, fontSize: "0.95rem", lineHeight: 1.6, fontWeight: 400 }}>{item}</p>
+                </div>
+              ))}
+              <a
+                href="/agendar"
                 style={{ backgroundColor: SECURITY_GREEN, fontWeight: 500 }}
-                className="w-full text-white px-6 py-4 rounded-full hover:brightness-110 transition mt-2"
+                className="inline-flex w-full items-center justify-center px-6 py-4 rounded-full text-white hover:brightness-110 transition mt-2"
               >
-                Empezar mi proceso jurídico hoy
-              </button>
+                Agendar una cita
+              </a>
             </div>
-          </form>
+          </div>
         </div>
       </section>
+
+      <ArticleHighlights
+        articles={articles}
+        eyebrow="Articulos legales"
+        title="Lecturas para tomar decisiones juridicas con calma."
+        description="Guias y recursos pensados para adultos mayores, familias y cuidadores que necesitan claridad legal antes de dar el siguiente paso."
+        variant="legal"
+      />
 
       {/* Footer */}
       <footer style={{ backgroundColor: WHITE, borderTop: `1px solid ${LINE}` }} className="w-full">
         <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div>
+          <div className="min-w-0">
             <div
-              className="flex items-center gap-2 mb-3"
-              style={{ letterSpacing: "0.25em", fontWeight: 600, color: AUTHORITY_BLUE }}
+              className="mb-3 flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 break-words text-sm sm:text-base"
+              style={{ letterSpacing: "0.12em", fontWeight: 600, color: AUTHORITY_BLUE }}
             >
-              <span>ESPINOZA</span><span style={{ color: SECURITY_GREEN, margin: "0 0.5rem" }}>MOSQUEDA</span><span style={{ fontWeight: 400 }}>ABOGADAS</span>
+              <span>ESPINOZA</span>
+              <span style={{ color: SECURITY_GREEN }}>MOSQUEDA</span>
+              <span style={{ fontWeight: 400 }}>ABOGADAS</span>
             </div>
             <p style={{ color: TRUST_GRAY, fontSize: "0.9rem", lineHeight: 1.6, fontWeight: 400 }}>
               Defensa jurídica especializada en derechos de la edad de oro.
@@ -414,9 +419,9 @@ export default function App() {
             <Phone className="w-4 h-4 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
             <span>+52 (55) 4521 8830</span>
           </div>
-          <div className="flex items-center gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
+          <div className="flex min-w-0 items-center gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
             <Mail className="w-4 h-4 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
-            <span>contacto@espinozamosqueda.legal</span>
+            <span className="break-all">contacto@espinozamosqueda.legal</span>
           </div>
         </div>
         <div

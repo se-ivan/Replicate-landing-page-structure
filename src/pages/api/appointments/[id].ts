@@ -1,7 +1,7 @@
 export const prerender = false;
 import type { APIRoute } from "astro";
 import { getSession } from "auth-astro/server";
-import { update, remove, getById } from "../../../lib/appointments";
+import { update, remove } from "../../../lib/appointments";
 
 export const PATCH: APIRoute = async ({ params, request }) => {
   const session = await getSession(request);
@@ -22,7 +22,7 @@ export const PATCH: APIRoute = async ({ params, request }) => {
 
   try {
     const body = await request.json();
-    const updated = update(id, body);
+    const updated = await update(id, body);
 
     if (!updated) {
       return new Response(JSON.stringify({ error: "Cita no encontrada" }), {
@@ -60,7 +60,7 @@ export const DELETE: APIRoute = async ({ params, request }) => {
     });
   }
 
-  const deleted = remove(id);
+  const deleted = await remove(id);
   if (!deleted) {
     return new Response(JSON.stringify({ error: "Cita no encontrada" }), {
       status: 404,
