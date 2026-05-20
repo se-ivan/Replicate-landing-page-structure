@@ -78,6 +78,12 @@ function joinIndexLabels(section: ArticleSection) {
   return section.navLabels?.length ? section.navLabels.join("\n") : section.navLabel || "";
 }
 
+function audienceLabel(audience: Article["audience"]) {
+  if (audience === "legal") return "/abogados";
+  if (audience === "psicologia") return "/psicologia";
+  return "index";
+}
+
 function toForm(article: Article): ArticleFormState {
   return {
     id: article.id,
@@ -306,15 +312,15 @@ export function ArticleManager() {
 
         <div className="grid gap-4 sm:grid-cols-2 mt-4">
           <label className="block">
-            <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Mostrar en</span>
+            <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Mostrar en ruta</span>
             <select
               value={form.audience}
               onChange={(e) => setForm((current) => ({ ...current, audience: e.target.value as ArticleFormState["audience"] }))}
               className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
             >
-              <option value="ambos">Ambos / general</option>
-              <option value="psicologia">Psicologia</option>
-              <option value="legal">Abogados</option>
+              <option value="ambos">index</option>
+              <option value="legal">/abogados</option>
+              <option value="psicologia">/psicologia</option>
             </select>
           </label>
           <label className="block">
@@ -529,7 +535,7 @@ export function ArticleManager() {
                 <div className="flex items-start justify-between gap-2">
                   <p className="font-semibold text-[#1a2e1a] text-sm font-['Inter'] leading-snug">{article.title}</p>
                   <span className="shrink-0 rounded-full bg-[#edf1e8] px-2 py-1 text-[10px] uppercase tracking-[0.8px] text-[#1a2e1a] font-['Inter']">
-                    {article.audience === "legal" ? "Abogados" : article.audience}
+                    {audienceLabel(article.audience)}
                   </span>
                 </div>
                 <p className="mt-1 text-xs text-[#5a6b5a] font-['Inter'] line-clamp-2">{article.desc}</p>

@@ -2,7 +2,7 @@
 import { Navbar } from "../../app/components/Navbar";
 import { Footer } from "../../app/components/Footer";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { filterArticlesByAudience, getArticleById, getArticles } from "../../lib/articles";
+import { filterArticlesByExactAudience, getArticleById, getArticles } from "../../lib/articles";
 
 export const prerender = false;
 
@@ -14,7 +14,7 @@ if (!article) {
 }
 
 const articles = await getArticles();
-const related = filterArticlesByAudience(articles, article.audience)
+const related = filterArticlesByExactAudience(articles, article.audience)
   .filter((item) => item.id !== article.id)
   .slice(0, 3);
 

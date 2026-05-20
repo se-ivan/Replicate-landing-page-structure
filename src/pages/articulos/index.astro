@@ -31,7 +31,7 @@ const articles = selectedAudience
 
 const audienceTabs: Array<{ label: string; href: string; active: boolean }> = [
   { label: "Todos", href: "/articulos", active: !selectedAudience },
-  { label: "General", href: "/articulos?categoria=ambos", active: selectedAudience === "ambos" },
+  { label: "Inicio", href: "/articulos?categoria=ambos", active: selectedAudience === "ambos" },
   { label: "Psicologia", href: "/articulos?categoria=psicologia", active: selectedAudience === "psicologia" },
   { label: "Abogados", href: "/articulos?categoria=legal", active: selectedAudience === "legal" },
 ];
@@ -39,7 +39,7 @@ const audienceTabs: Array<{ label: string; href: string; active: boolean }> = [
 const audienceLabel = (audience: ArticleAudience) => {
   if (audience === "legal") return "Abogados";
   if (audience === "psicologia") return "Psicologia";
-  return "General";
+  return "Inicio";
 };
 ---
 

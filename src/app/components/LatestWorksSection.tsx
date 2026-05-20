@@ -8,7 +8,9 @@ type Props = {
 
 export function LatestWorksSection({ articles = defaultArticles }: Props) {
   const [selected, setSelected] = useState(0);
-  const visibleArticles = articles.length > 0 ? articles : defaultArticles;
+  const visibleArticles = articles;
+
+  if (visibleArticles.length === 0) return null;
 
   return (
     <section id="blog" className="bg-[#f5f2ec] pt-20 pb-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="400">

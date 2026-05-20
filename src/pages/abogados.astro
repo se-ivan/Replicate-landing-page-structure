@@ -1,11 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import App from "../app/components/abogados/App.tsx";
-import { getArticlesForAudience } from "../lib/articles";
+import { getArticlesForExactAudience } from "../lib/articles";
 
 export const prerender = false;
 
-const articles = await getArticlesForAudience("legal");
+const articles = await getArticlesForExactAudience("legal");
 ---
 
 <BaseLayout 

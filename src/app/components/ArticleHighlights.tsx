@@ -38,7 +38,7 @@ const variantStyles: Record<Variant, { bg: string; text: string; muted: string; 
 function audienceLabel(article: Article) {
   if (article.audience === "legal") return "Abogados";
   if (article.audience === "psicologia") return "Psicologia";
-  return "General";
+  return "Inicio";
 }
 
 export function ArticleHighlights({ articles, eyebrow, title, description, variant = "general" }: Props) {

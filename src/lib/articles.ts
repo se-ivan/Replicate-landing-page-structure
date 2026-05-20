@@ -131,7 +131,7 @@ export function validateArticle(data: ArticleInput): string | null {
 }
 
 export function filterArticlesByAudience(articles: Article[], audience: ArticleAudience): Article[] {
-  return articles.filter((article) => article.audience === "ambos" || article.audience === audience);
+  return filterArticlesByExactAudience(articles, audience);
 }
 
 export function filterArticlesByExactAudience(articles: Article[], audience: ArticleAudience): Article[] {
