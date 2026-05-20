@@ -10,7 +10,10 @@ const getReadingTime = (text: string) => {
 };
 
 const getArticleReadingTime = (article: (typeof articles)[number]) => {
-  const fullText = [article.intro, ...article.sections.flatMap((section) => section.paragraphs)].join(" ");
+  const fullText = [
+    article.intro,
+    ...article.sections.flatMap((section) => [...section.paragraphs, ...(section.bullets ?? [])]),
+  ].join(" ");
   return getReadingTime(fullText);
 };
 ---

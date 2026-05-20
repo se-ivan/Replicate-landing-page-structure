@@ -27,6 +27,12 @@ const services = [
   },
 ];
 
+const serviceArticleLinks: Record<string, string> = {
+  "terapia-grupal": "/articulos/terapia-grupal-adultez-mayor",
+  "terapia-individual": "/articulos/terapia-individual-adultez-mayor",
+  "psicologia-general": "/articulos/depresion-no-es-normal-envejecimiento",
+};
+
 export function Services() {
   return (
     <section id="servicios" className="py-24 md:py-32 bg-[#F7F5F0]">
@@ -76,7 +82,11 @@ export function Services() {
                       </li>
                     ))}
                   </ul>
-                  <a href="#contacto" className="mt-6 inline-flex items-center gap-2 text-[#1C4432] group-hover:gap-3 transition-all" style={{ fontSize: "0.9rem" }}>
+                  <a
+                    href={serviceArticleLinks[s.id] ?? "#contacto"}
+                    className="mt-6 inline-flex items-center gap-2 text-[#1C4432] group-hover:gap-3 transition-all"
+                    style={{ fontSize: "0.9rem" }}
+                  >
                     Conocer más <ArrowUpRight size={16} />
                   </a>
                 </div>

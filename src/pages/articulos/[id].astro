@@ -30,7 +30,10 @@ const sectionLinks = article.sections.map((section) => ({
   label: section.heading,
 }));
 
-const fullText = [article.intro, ...article.sections.flatMap((section) => section.paragraphs)].join(" ");
+const fullText = [
+  article.intro,
+  ...article.sections.flatMap((section) => [...section.paragraphs, ...(section.bullets ?? [])]),
+].join(" ");
 const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length / 180));
 ---
 
@@ -78,6 +81,16 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
                       {section.paragraphs.map((paragraph) => (
                         <p class="font-['Inter'] text-base md:text-lg leading-7 md:leading-8 text-[#1a2e1a]/85">{paragraph}</p>
                       ))}
+                      {section.bullets && (
+                        <ul class="grid gap-3 pt-1">
+                          {section.bullets.map((bullet) => (
+                            <li class="flex gap-3 rounded-2xl bg-[#f5f2ec] px-4 py-3 font-['Inter'] text-base text-[#1a2e1a]/85">
+                              <span class="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#5B7B53]"></span>
+                              <span>{bullet}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
                     </div>
                   </section>
                 );
