@@ -27,6 +27,7 @@ export const articles: Article[] = [
     id: "terapia-grupal-adultez-mayor",
     title: "Beneficios de asistir a terapia grupal en la adultez mayor",
     desc: "Un espacio cálido para sentirse acompañado, escuchado y emocionalmente fortalecido durante esta etapa de la vida.",
+    audience: "psicologia",
     tags: ["Psicología", "Terapia Grupal", "Adultos Mayores"],
     img: "https://images.unsplash.com/photo-1753362594001-60c847cab56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
     intro:
@@ -140,6 +141,7 @@ export const articles: Article[] = [
     id: "terapia-individual-adultez-mayor",
     title: "Beneficios de la terapia individual en la adultez mayor",
     desc: "Un espacio seguro y confidencial para sentirse escuchado, acompañado y emocionalmente tranquilo.",
+    audience: "psicologia",
     tags: ["Psicología", "Terapia Individual", "Adultos Mayores"],
     img: "https://images.unsplash.com/photo-1765447041709-9f1efbc81606?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
     intro:
@@ -232,6 +234,7 @@ export const articles: Article[] = [
     id: "depresion-no-es-normal-envejecimiento",
     title: "La depresión no es una parte normal del envejecimiento",
     desc: "Sentirse triste o solo no debe aceptarse como inevitable: con apoyo psicológico es posible recuperar bienestar.",
+    audience: "psicologia",
     tags: ["Psicología", "Depresión", "Bienestar Emocional"],
     img: "https://images.unsplash.com/photo-1749325390269-b9764b27f613?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
     intro:

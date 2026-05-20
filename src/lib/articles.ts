@@ -42,8 +42,11 @@ function parseSections(value: Prisma.JsonValue): ArticleSection[] {
       const paragraphs = Array.isArray(record.paragraphs)
         ? record.paragraphs.filter((paragraph): paragraph is string => typeof paragraph === "string")
         : [];
+      const bullets = Array.isArray(record.bullets)
+        ? record.bullets.filter((bullet): bullet is string => typeof bullet === "string")
+        : undefined;
 
-      return heading ? { heading, navLabel, navLabels, paragraphs } : null;
+      return heading ? { heading, navLabel, navLabels, paragraphs, bullets } : null;
     })
     .filter((section): section is ArticleSection => Boolean(section));
 }
@@ -100,6 +103,7 @@ function normalizeArticleInput(data: ArticleInput): Article {
             : section.navLabel?.split(/[,\n]/).map((label) => label.trim()).filter(Boolean)
         ) || undefined,
         paragraphs: section.paragraphs.map((paragraph) => paragraph.trim()).filter(Boolean),
+        bullets: section.bullets?.map((bullet) => bullet.trim()).filter(Boolean),
       }))
       .filter((section) => section.heading && section.paragraphs.length > 0),
   };
