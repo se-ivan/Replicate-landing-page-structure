@@ -1,6 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import App from "../app/components/abogados/App.tsx";
+import { getArticlesForAudience } from "../lib/articles";
+
+export const prerender = false;
+
+const articles = await getArticlesForAudience("legal");
 ---
 
 <BaseLayout 
@@ -8,5 +13,5 @@ import App from "../app/components/abogados/App.tsx";
   description="Defensa jurídica en Plenitud Emocional. Espinoza Mosqueda Abogadas, enfocadas en proteger los derechos de la edad de oro."
   keywords="plenitud emocional, plenitudemocional, abogados edad de oro, espinoza mosqueda abogadas, proteccion jurigica"
 >
-  <App client:load />
+  <App articles={articles} client:load />
 </BaseLayout>

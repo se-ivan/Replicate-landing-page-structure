@@ -13,7 +13,7 @@ export const GET: APIRoute = async ({ request }) => {
     });
   }
 
-  const appointments = getAll();
+  const appointments = await getAll();
   return new Response(JSON.stringify(appointments), {
     status: 200,
     headers: { "Content-Type": "application/json" },
@@ -53,7 +53,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const appointment = create({
+    const appointment = await create({
       nombre: body.nombre.trim(),
       apellido: body.apellido.trim(),
       fechaNacimiento: body.fechaNacimiento,

@@ -1,9 +1,14 @@
 import { ArrowUpRight } from "lucide-react";
 import { useState } from "react";
-import { articles } from "../../data/articles";
+import { articles as defaultArticles, type Article } from "../../data/articles";
 
-export function LatestWorksSection() {
+type Props = {
+  articles?: Article[];
+};
+
+export function LatestWorksSection({ articles = defaultArticles }: Props) {
   const [selected, setSelected] = useState(0);
+  const visibleArticles = articles.length > 0 ? articles : defaultArticles;
 
   return (
     <section id="blog" className="bg-[#f5f2ec] pt-20 pb-20 px-6 md:px-12 lg:px-20 sr" data-sr-delay="400">
@@ -23,7 +28,7 @@ export function LatestWorksSection() {
 
         {/* Desktop cards */}
         <div className="hidden md:flex gap-4 h-[65vh] min-h-[520px] max-h-[760px]">
-          {articles.map((a, i) => {
+          {visibleArticles.map((a, i) => {
             const isActive = selected === i;
             return (
               <div
@@ -117,7 +122,7 @@ export function LatestWorksSection() {
 
         {/* Mobile cards - vertical stack */}
         <div className="flex md:hidden flex-col gap-4">
-          {articles.map((a, i) => {
+          {visibleArticles.map((a, i) => {
             const isActive = selected === i;
             return (
               <div

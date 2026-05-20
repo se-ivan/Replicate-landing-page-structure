@@ -1,6 +1,6 @@
 import { defineConfig } from "astro/config";
 import react from "@astrojs/react";
-import vercel from "@astrojs/vercel/serverless";
+import vercel from "@astrojs/vercel";
 import auth from "auth-astro";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
@@ -20,6 +20,9 @@ function figmaAssetResolver() {
 export default defineConfig({
   output: "server",
   adapter: vercel(),
+  security: {
+    checkOrigin: false,
+  },
   integrations: [react(), auth()],
   vite: {
     plugins: [figmaAssetResolver(), tailwindcss()],

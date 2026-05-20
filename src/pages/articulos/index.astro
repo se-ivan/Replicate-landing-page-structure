@@ -1,26 +1,51 @@
----
-import { articles } from "../../data/articles";
+﻿---
+import { filterArticlesByExactAudience, getArticles } from "../../lib/articles";
+import type { Article, ArticleAudience } from "../../data/articles";
 import { Navbar } from "../../app/components/Navbar";
 import { Footer } from "../../app/components/Footer";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+
+export const prerender = false;
 
 const getReadingTime = (text: string) => {
   const words = text.trim().split(/\s+/).length;
   return Math.max(3, Math.round(words / 180));
 };
 
-const getArticleReadingTime = (article: (typeof articles)[number]) => {
+const getArticleReadingTime = (article: Article) => {
   const fullText = [
     article.intro,
     ...article.sections.flatMap((section) => [...section.paragraphs, ...(section.bullets ?? [])]),
   ].join(" ");
   return getReadingTime(fullText);
 };
+
+const requestedAudience = Astro.url.searchParams.get("categoria");
+const selectedAudience = ["ambos", "psicologia", "legal"].includes(requestedAudience || "")
+  ? requestedAudience as ArticleAudience
+  : null;
+const allArticles = await getArticles();
+const articles = selectedAudience
+  ? filterArticlesByExactAudience(allArticles, selectedAudience)
+  : allArticles;
+
+const audienceTabs: Array<{ label: string; href: string; active: boolean }> = [
+  { label: "Todos", href: "/articulos", active: !selectedAudience },
+  { label: "General", href: "/articulos?categoria=ambos", active: selectedAudience === "ambos" },
+  { label: "Psicologia", href: "/articulos?categoria=psicologia", active: selectedAudience === "psicologia" },
+  { label: "Abogados", href: "/articulos?categoria=legal", active: selectedAudience === "legal" },
+];
+
+const audienceLabel = (audience: ArticleAudience) => {
+  if (audience === "legal") return "Abogados";
+  if (audience === "psicologia") return "Psicologia";
+  return "General";
+};
 ---
 
 <BaseLayout
-  title="Artículos sobre Jubilación, Bienestar y Envejecimiento Activo"
-  description="Explora artículos de Plenitud Emocional sobre jubilación, salud mental, envejecimiento activo, prevención y apoyo a cuidadores."
+  title="ArtÃ­culos sobre JubilaciÃ³n, Bienestar y Envejecimiento Activo"
+  description="Explora artÃ­culos de Plenitud Emocional sobre jubilaciÃ³n, salud mental, envejecimiento activo, prevenciÃ³n y apoyo a cuidadores."
   image="/images/hero/hero-bg.jpg"
   bodyClass="bg-[#f5f2ec] text-[#1a2e1a]"
 >
@@ -31,14 +56,26 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
       <div class="absolute inset-0 bg-gradient-to-b from-[#0f1a0fcc]/70 via-[#132214]/75 to-[#1a2e1a]/95"></div>
       <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-24 pb-16 md:pt-32 md:pb-24">
         <a href="/" class="font-['Inter'] text-sm opacity-90 hover:opacity-100">Volver al inicio</a>
-        <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.05]">Biblioteca de Artículos</h1>
+        <h1 class="mt-5 font-['Playfair_Display'] text-4xl md:text-6xl leading-[1.05]">Biblioteca de ArtÃ­culos</h1>
         <p class="mt-5 max-w-3xl font-['Inter'] text-base md:text-lg text-white/90 leading-relaxed">
-          Lecturas para transitar esta etapa con claridad: emociones, envejecimiento activo, prevención y apoyo familiar.
+          Lecturas para transitar esta etapa con claridad: emociones, envejecimiento activo, prevenciÃ³n y apoyo familiar.
         </p>
       </div>
     </header>
 
     <main class="mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 py-12 md:py-20">
+      <div class="mb-8 flex flex-wrap gap-2">
+        {
+          audienceTabs.map((tab) => (
+            <a
+              href={tab.href}
+              class={`rounded-full px-4 py-2 font-['Inter'] text-sm transition ${tab.active ? "bg-[#1a2e1a] text-white" : "bg-white text-[#1a2e1a] ring-1 ring-black/10 hover:ring-[#1a2e1a]/30"}`}
+            >
+              {tab.label}
+            </a>
+          ))
+        }
+      </div>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-7 md:gap-9">
         {
           articles.map((article) => (
@@ -54,7 +91,7 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
               <div class="p-6 md:p-7 flex flex-col">
                 <div class="flex items-center justify-between gap-3 font-['Inter'] text-xs text-[#1a2e1a]/60">
                   <span>{getArticleReadingTime(article)} min de lectura</span>
-                  <span>Artículo</span>
+                  <span>{audienceLabel(article.audience)}</span>
                 </div>
                 <h2 class="mt-3 font-['Playfair_Display'] text-3xl leading-tight text-[#1a2e1a]">{article.title}</h2>
                 <p class="mt-3 font-['Inter'] text-[15px] md:text-base text-[#1a2e1a]/82 leading-relaxed">{article.desc}</p>
@@ -65,7 +102,7 @@ const getArticleReadingTime = (article: (typeof articles)[number]) => {
                   href={`/articulos/${article.id}`}
                   class="mt-7 inline-flex w-fit items-center rounded-full bg-[#1a2e1a] px-5 py-2.5 font-['Inter'] text-sm text-white transition hover:bg-[#2c462c]"
                 >
-                  Leer artículo
+                  Leer artÃ­culo
                 </a>
               </div>
             </article>

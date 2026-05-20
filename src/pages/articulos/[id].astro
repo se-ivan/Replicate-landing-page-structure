@@ -1,20 +1,22 @@
----
-import { articles } from "../../data/articles";
+﻿---
 import { Navbar } from "../../app/components/Navbar";
 import { Footer } from "../../app/components/Footer";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import { filterArticlesByAudience, getArticleById, getArticles } from "../../lib/articles";
 
-export const prerender = true;
+export const prerender = false;
 
-export function getStaticPaths() {
-  return articles.map((article) => ({
-    params: { id: article.id },
-    props: { article },
-  }));
+const id = Astro.params.id;
+const article = id ? await getArticleById(id) : null;
+
+if (!article) {
+  return new Response("Articulo no encontrado", { status: 404 });
 }
 
-const { article } = Astro.props;
-const related = articles.filter((item) => item.id !== article.id).slice(0, 3);
+const articles = await getArticles();
+const related = filterArticlesByAudience(articles, article.audience)
+  .filter((item) => item.id !== article.id)
+  .slice(0, 3);
 
 const slugify = (value: string) =>
   value
@@ -27,18 +29,21 @@ const slugify = (value: string) =>
 
 const sectionLinks = article.sections.map((section) => ({
   id: slugify(section.heading),
-  label: section.heading,
+  labels: section.navLabels?.length ? section.navLabels : [section.navLabel || section.heading],
 }));
 
 const fullText = [
   article.intro,
   ...article.sections.flatMap((section) => [...section.paragraphs, ...(section.bullets ?? [])]),
 ].join(" ");
-const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length / 180));
+const automaticReadingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length / 180));
+const readingTime = article.readingTimeMinutes || automaticReadingTime;
+const headerMeta = article.headerMeta || "Guia practica para Morelia, Michoacan";
+const tocTitle = article.tocTitle || "En este articulo";
 ---
 
 <BaseLayout
-  title={`${article.title} | Artículos`}
+  title={`${article.title} | ArtÃ­culos`}
   description={article.desc}
   image={article.img}
   type="article"
@@ -52,7 +57,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
 
       <div class="relative mx-auto max-w-[1220px] px-6 md:px-12 lg:px-20 pt-24 pb-12 md:pt-32 md:pb-16">
         <div class="max-w-3xl">
-          <a href="/articulos" class="font-['Inter'] text-sm text-white/90 hover:text-white">← Volver a artículos</a>
+          <a href="/articulos" class="font-['Inter'] text-sm text-white/90 hover:text-white">â† Volver a artÃ­culos</a>
           <div class="mt-4 flex flex-wrap gap-2">
             {article.tags.map((tag) => <span class="rounded-full border border-white/40 bg-white/10 px-3 py-1 font-['Inter'] text-xs">{tag}</span>)}
           </div>
@@ -60,7 +65,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
           <div class="mt-5 flex flex-wrap items-center gap-4 font-['Inter'] text-sm text-white/85">
             <span>{readingTime} min de lectura</span>
             <span class="h-1 w-1 rounded-full bg-white/70"></span>
-            <span>Guía práctica para Morelia, Michoacán</span>
+            <span>{headerMeta}</span>
           </div>
           <p class="mt-5 font-['Inter'] text-base md:text-xl text-white/92 leading-relaxed">{article.intro}</p>
         </div>
@@ -102,13 +107,13 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
         <aside class="hidden lg:block">
           <div class="sticky top-28 space-y-4">
             <div class="rounded-2xl bg-white p-5 ring-1 ring-black/10 shadow-sm">
-              <p class="font-['Inter'] text-xs uppercase tracking-[1.4px] text-[#1a2e1a]/60">En este artículo</p>
+              <p class="font-['Inter'] text-xs uppercase tracking-[1.4px] text-[#1a2e1a]/60">{tocTitle}</p>
               <ul class="mt-4 space-y-3">
                 {
                   sectionLinks.map((section) => (
                     <li>
                       <a href={`#${section.id}`} class="font-['Inter'] text-sm text-[#1a2e1a]/80 hover:text-[#1a2e1a] transition">
-                        {section.label}
+                        {section.labels.map((label) => <span class="block">{label}</span>)}
                       </a>
                     </li>
                   ))
@@ -117,9 +122,9 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
             </div>
 
             <div class="rounded-2xl bg-[#1a2e1a] p-5 text-white">
-              <p class="font-['Playfair_Display'] text-2xl leading-tight">¿Necesitas orientación?</p>
+              <p class="font-['Playfair_Display'] text-2xl leading-tight">Â¿Necesitas orientaciÃ³n?</p>
               <p class="mt-2 font-['Inter'] text-sm text-white/85 leading-relaxed">
-                Te acompañamos en procesos emocionales y preventivos para envejecer con dignidad.
+                Te acompaÃ±amos en procesos emocionales y preventivos para envejecer con dignidad.
               </p>
               <a href="/#contacto" class="mt-4 inline-flex rounded-full border border-white/45 px-4 py-2 font-['Inter'] text-sm hover:bg-white/10">
                 Agendar entrevista
@@ -131,7 +136,7 @@ const readingTime = Math.max(3, Math.round(fullText.trim().split(/\s+/).length /
 
       <section class="mt-14 md:mt-20">
         <div class="mb-8 flex items-center justify-between">
-          <h3 class="font-['Playfair_Display'] text-3xl text-[#1a2e1a]">Más artículos</h3>
+          <h3 class="font-['Playfair_Display'] text-3xl text-[#1a2e1a]">MÃ¡s artÃ­culos</h3>
           <a href="/articulos" class="font-['Inter'] text-sm underline underline-offset-4 hover:opacity-70">Ir a biblioteca</a>
         </div>
 

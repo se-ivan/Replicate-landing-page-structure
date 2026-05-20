@@ -7,8 +7,13 @@ import { TestimonialSection } from "./components/TestimonialSection";
 import { LatestWorksSection } from "./components/LatestWorksSection";
 import { CTASection } from "./components/CTASection";
 import { Footer } from "./components/Footer";
+import type { Article } from "../data/articles";
 
-export default function App() {
+type Props = {
+  articles?: Article[];
+};
+
+export default function App({ articles }: Props) {
   return (
     <div className="w-full min-h-screen bg-[#f5f2ec]">
       <Navbar />
@@ -17,7 +22,7 @@ export default function App() {
       <StepsSection />
       <HomeGardenSection />
       <TestimonialSection />
-      <LatestWorksSection />
+      <LatestWorksSection articles={articles} />
       <CTASection />
       <Footer />
     </div>
