@@ -175,8 +175,8 @@ export default function App({ articles = [] }: Props) {
           style={{ backgroundColor: AUTHORITY_BLUE, minHeight: "min(100vh, 880px)" }}
         >
           <ImageWithFallback
-            src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=2000&q=80"
-            alt="Abogados con adultos mayores"
+            src="/images/hero/hero-abogados.jpg"
+            alt="Oficina de Espinoza Mosqueda Abogadas"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div
