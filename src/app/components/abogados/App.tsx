@@ -97,7 +97,7 @@ function LegalNavbar() {
     >
       <a href="/" className="flex items-center gap-3" aria-label="Ir al inicio de Plenitud Emocional">
         <img
-          src="/Logo.svg"
+          src="/logo.svg"
           alt="Plenitud Emocional"
           className={`h-8 w-auto md:h-12 ${scrolled ? "" : "filter brightness-0 invert"}`}
         />

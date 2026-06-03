@@ -78,7 +78,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-white/15 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="flex items-center gap-3">
-            <img src="/Logo.svg" alt="Logo" className="h-8 brightness-0 invert opacity-90" />
+            <img src="/logo.svg" alt="Logo" className="h-8 brightness-0 invert opacity-90" />
             <div className="text-white/60" style={{ fontSize: "0.85rem" }}>
               Psic. Catalina Gallegos Mosqueda · Céd. Prof. 0000000
             </div>

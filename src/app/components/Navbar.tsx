@@ -32,7 +32,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
     >
       <div className="flex items-center gap-2">
         <img
-          src="/Logo.svg"
+          src="/logo.svg"
           alt="Plenitud Emocional"
           className={`h-8 md:h-12 w-auto ${scrolled ? "" : "filter brightness-0 invert"}`}
         />
@@ -61,7 +61,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
         onClick={() => setOpen(!open)}
         aria-label={open ? "Cerrar menú" : "Abrir menú"}
       >
-        <img src="/Logo.svg" alt="Abrir menú" className={`h-6 w-6 ${scrolled ? "" : "filter brightness-0 invert"}`} />
+        <img src="/logo.svg" alt="Abrir menú" className={`h-6 w-6 ${scrolled ? "" : "filter brightness-0 invert"}`} />
       </button>
       {open && (
         <div
