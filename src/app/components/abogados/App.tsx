@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 import { ArticleHighlights } from "../ArticleHighlights";
+import { Footer } from "../Footer";
 import type { Article } from "../../../data/articles";
 import {
   Scale,
@@ -14,10 +15,6 @@ import {
   Lock,
   BadgeCheck,
   Accessibility,
-  CalendarCheck,
-  Phone,
-  Mail,
-  MapPin,
   Menu,
   X,
 } from "lucide-react";
@@ -100,7 +97,7 @@ function LegalNavbar() {
     >
       <a href="/" className="flex items-center gap-3" aria-label="Ir al inicio de Plenitud Emocional">
         <img
-          src="/logo.svg"
+          src="/Logo.svg"
           alt="Plenitud Emocional"
           className={`h-8 w-auto md:h-12 ${scrolled ? "" : "filter brightness-0 invert"}`}
         />
@@ -371,9 +368,9 @@ export default function App({ articles = [] }: Props) {
         </div>
       </section>
 
-      {/* Section 4 — Garantías + form */}
+      {/* Section 4 — Garantías */}
       <section id="contacto" className="w-full py-24 lg:py-32" style={{ backgroundColor: WHITE }}>
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <p
               className="uppercase mb-4"
@@ -418,46 +415,16 @@ export default function App({ articles = [] }: Props) {
             </ul>
           </div>
 
-          <div
-            className="p-8 lg:p-10 rounded-2xl"
+          <figure
+            className="relative min-h-[380px] overflow-hidden rounded-2xl lg:min-h-[560px]"
             style={{ backgroundColor: SOFT, border: `1px solid ${LINE}` }}
           >
-            <div
-              className="mb-8 flex h-14 w-14 items-center justify-center rounded-full"
-              style={{ backgroundColor: WHITE, border: `1px solid ${LINE}` }}
-            >
-              <CalendarCheck className="h-6 w-6" style={{ color: SECURITY_GREEN }} strokeWidth={1.5} />
-            </div>
-            <h3
-              style={{ color: AUTHORITY_BLUE, fontWeight: 500, fontSize: "1.5rem", letterSpacing: "-0.01em" }}
-              className="mb-2"
-            >
-              Inicie su consulta confidencial
-            </h3>
-            <p style={{ color: TRUST_GRAY, fontSize: "0.95rem", fontWeight: 400 }} className="mb-8">
-              Agenda una cita desde el formulario general para que podamos revisar tu caso legal y contactarte con la informacion necesaria.
-            </p>
-
-            <div className="space-y-4">
-              {[
-                "Selecciona asesoria legal o servicio integral.",
-                "Describe brevemente tu situacion.",
-                "Te contactaremos para confirmar la cita.",
-              ].map((item) => (
-                <div key={item} className="flex items-start gap-3">
-                  <span className="mt-1 h-2 w-2 rounded-full" style={{ backgroundColor: SECURITY_GREEN }} />
-                  <p style={{ color: TRUST_GRAY, fontSize: "0.95rem", lineHeight: 1.6, fontWeight: 400 }}>{item}</p>
-                </div>
-              ))}
-              <a
-                href="/agendar"
-                style={{ backgroundColor: SECURITY_GREEN, fontWeight: 500 }}
-                className="inline-flex w-full items-center justify-center px-6 py-4 rounded-full text-white hover:brightness-110 transition mt-2"
-              >
-                Agendar una cita
-              </a>
-            </div>
-          </div>
+            <ImageWithFallback
+              src="/images/hero/imagen-silla.png"
+              alt="Adultos mayores conversando en una banca"
+              className="absolute inset-0 h-full w-full object-cover object-center"
+            />
+          </figure>
         </div>
       </section>
 
@@ -469,42 +436,7 @@ export default function App({ articles = [] }: Props) {
         variant="legal"
       />
 
-      {/* Footer */}
-      <footer style={{ backgroundColor: WHITE, borderTop: `1px solid ${LINE}` }} className="w-full">
-        <div className="max-w-7xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-4 gap-8">
-          <div className="min-w-0">
-            <div
-              className="mb-3 flex max-w-full flex-wrap items-center gap-x-2 gap-y-1 break-words text-sm sm:text-base"
-              style={{ letterSpacing: "0.12em", fontWeight: 600, color: AUTHORITY_BLUE }}
-            >
-              <span>ESPINOZA</span>
-              <span style={{ color: SECURITY_GREEN }}>MOSQUEDA</span>
-              <span style={{ fontWeight: 400 }}>ABOGADAS</span>
-            </div>
-            <p style={{ color: TRUST_GRAY, fontSize: "0.9rem", lineHeight: 1.6, fontWeight: 400 }}>
-              Defensa jurídica especializada en derechos de la edad de oro.
-            </p>
-          </div>
-          <div className="flex items-start gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
-            <MapPin className="w-4 h-4 mt-1 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
-            <span>Av. Reforma 1245, Piso 12<br />Despacho Jurídico</span>
-          </div>
-          <div className="flex items-center gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
-            <Phone className="w-4 h-4 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
-            <span>+52 (55) 4521 8830</span>
-          </div>
-          <div className="flex min-w-0 items-center gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
-            <Mail className="w-4 h-4 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
-            <span className="break-all">contacto@espinozamosqueda.legal</span>
-          </div>
-        </div>
-        <div
-          className="text-center py-6"
-          style={{ borderTop: `1px solid ${LINE}`, color: MUTED, fontSize: "0.85rem", fontWeight: 400 }}
-        >
-          © 2026 Espinoza Mosqueda Abogadas. Todos los derechos reservados.
-        </div>
-      </footer>
+      <Footer sectionPrefix="/" />
     </div>
   );
 }
