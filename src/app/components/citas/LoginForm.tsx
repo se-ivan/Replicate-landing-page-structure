@@ -19,7 +19,7 @@ export function LoginForm() {
         username,
         password,
         redirect: false,
-        callbackUrl: "/admin",
+        callbackUrl: `${window.location.origin}/admin`,
       });
 
       // auth-astro redirects on success. A response here means Auth.js returned
@@ -36,7 +36,7 @@ export function LoginForm() {
       if (error) {
         setError("Credenciales incorrectas. Verifica tu usuario y contraseña.");
       } else {
-        window.location.href = "/admin";
+        window.location.href = `${window.location.origin}/admin`;
       }
     } catch {
       setError("Error de conexión. Intenta de nuevo.");

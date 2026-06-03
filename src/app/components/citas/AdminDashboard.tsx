@@ -119,11 +119,11 @@ export function AdminDashboard() {
       await fetch("/api/auth/signout", {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({ csrfToken, callbackUrl: "/" }),
+        body: new URLSearchParams({ csrfToken, callbackUrl: window.location.origin }),
       });
-      window.location.href = "/";
+      window.location.href = window.location.origin;
     } catch {
-      window.location.href = "/";
+      window.location.href = window.location.origin;
     }
   };
 

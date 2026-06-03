@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { ImageWithFallback } from "./components/figma/ImageWithFallback";
 import { ArticleHighlights } from "../ArticleHighlights";
 import type { Article } from "../../../data/articles";
@@ -34,9 +34,9 @@ const FONT = "'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif";
 
 const navLinks = [
   { label: "Inicio", href: "/" },
-  { label: "QuiÃ©nes Somos", href: "/#quienes-somos" },
+  { label: "Quiénes Somos", href: "/#quienes-somos" },
   { label: "Servicios", href: "/#servicios" },
-  { label: "PsicologÃ­a", href: "/psicologia" },
+  { label: "Psicología", href: "/psicologia" },
   { label: "Abogados", href: "/abogados", active: true },
   { label: "Blog", href: "/articulos" },
   { label: "Contacto", href: "#contacto" },
@@ -46,36 +46,36 @@ const competencias = [
   {
     title: "Derechos pensionales",
     icon: Scale,
-    text: "Reclamaciones de pensiÃ³n, reliquidaciones y defensa ante la administraciÃ³n.",
+    text: "Reclamaciones de pensión, reliquidaciones y defensa ante la administración.",
   },
   {
     title: "Sucesiones y voluntad previa",
     icon: Feather,
-    text: "RedacciÃ³n de testamentos, procesos sucesorios y planeaciÃ³n patrimonial familiar.",
+    text: "Redacción de testamentos, procesos sucesorios y planeación patrimonial familiar.",
   },
   {
-    title: "ProtecciÃ³n ante el maltrato legal",
+    title: "Protección ante el maltrato legal",
     icon: ShieldCheck,
-    text: "Medidas de protecciÃ³n, defensa ante abuso patrimonial o fÃ­sico, procesos de interdicciÃ³n.",
+    text: "Medidas de protección, defensa ante abuso patrimonial o físico, procesos de interdicción.",
   },
   {
     title: "Derechos de vivienda y salud",
     icon: Building2,
-    text: "Contratos de arrendamiento, defensa ante desahucios, reclamaciones por negligencia mÃ©dica.",
+    text: "Contratos de arrendamiento, defensa ante desahucios, reclamaciones por negligencia médica.",
   },
 ];
 
 const proceso = [
-  { n: "01", title: "EvaluaciÃ³n de expediente", icon: Search, text: "Analizamos su caso con discreciÃ³n y precisiÃ³n." },
-  { n: "02", title: "DiseÃ±o de estrategia legal", icon: Swords, text: "Construimos un plan jurÃ­dico a su medida." },
-  { n: "03", title: "RepresentaciÃ³n y gestiÃ³n", icon: Gavel, text: "Actuamos ante toda instancia administrativa o judicial." },
-  { n: "04", title: "ResoluciÃ³n y seguimiento", icon: Handshake, text: "AcompaÃ±amiento posterior hasta el cierre completo." },
+  { n: "01", title: "Evaluación de expediente", icon: Search, text: "Analizamos su caso con discreción y precisión." },
+  { n: "02", title: "Diseño de estrategia legal", icon: Swords, text: "Construimos un plan jurídico a su medida." },
+  { n: "03", title: "Representación y gestión", icon: Gavel, text: "Actuamos ante toda instancia administrativa o judicial." },
+  { n: "04", title: "Resolución y seguimiento", icon: Handshake, text: "Acompañamiento posterior hasta el cierre completo." },
 ];
 
 const garantias = [
-  { icon: Lock, title: "Confidencialidad garantizada", text: "Su informaciÃ³n permanece protegida en todo momento." },
+  { icon: Lock, title: "Confidencialidad garantizada", text: "Su información permanece protegida en todo momento." },
   { icon: BadgeCheck, title: "Abogados colegiados", text: "Profesionales acreditados con trayectoria verificable." },
-  { icon: Accessibility, title: "AtenciÃ³n prioritaria", text: "Procesos accesibles diseÃ±ados para adultos mayores." },
+  { icon: Accessibility, title: "Atención prioritaria", text: "Procesos accesibles diseñados para adultos mayores." },
 ];
 
 function LegalNavbar() {
@@ -131,7 +131,7 @@ function LegalNavbar() {
         type="button"
         className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-current/25 md:hidden"
         onClick={() => setOpen((value) => !value)}
-        aria-label={open ? "Cerrar menÃº" : "Abrir menÃº"}
+        aria-label={open ? "Cerrar menú" : "Abrir menú"}
       >
         {open ? <X size={18} /> : <Menu size={18} />}
       </button>
@@ -171,7 +171,7 @@ export default function App({ articles = [] }: Props) {
       style={{ backgroundColor: "#f5f2ec", color: AUTHORITY_BLUE, fontFamily: FONT }}
     >
       <LegalNavbar />
-      {/* Section 1 â€” Hero */}
+      {/* Section 1 — Hero */}
       <section id="inicio" className="w-full">
         <div
           className="relative w-full overflow-hidden"
@@ -200,7 +200,7 @@ export default function App({ articles = [] }: Props) {
                 className="mb-5 uppercase text-white/78"
                 style={{ letterSpacing: "0.28em", fontSize: "0.75rem", fontWeight: 500 }}
               >
-                Plenitud Emocional Â· Defensa jurÃ­dica
+                Plenitud Emocional · Defensa jurídica
               </p>
               <h1
                 className="mb-8 text-white"
@@ -211,13 +211,13 @@ export default function App({ articles = [] }: Props) {
                   fontSize: "clamp(2.85rem, 6vw, 5.8rem)",
                 }}
               >
-                Defensa jurÃ­dica para vivir con <span style={{ color: "#E9D9B8", fontStyle: "italic" }}>dignidad.</span>
+                Defensa jurídica para vivir con <span style={{ color: "#E9D9B8", fontStyle: "italic" }}>dignidad.</span>
               </h1>
               <p
                 className="mb-9 max-w-2xl text-white/88"
                 style={{ lineHeight: 1.7, fontSize: "1.05rem", fontWeight: 400 }}
               >
-                Espinoza Mosqueda Abogadas acompaÃ±a a personas adultas mayores y sus familias con orientaciÃ³n legal clara, trato humano y protecciÃ³n de sus derechos.
+                Espinoza Mosqueda Abogadas acompaña a personas adultas mayores y sus familias con orientación legal clara, trato humano y protección de sus derechos.
               </p>
 
               <div className="mb-12 flex flex-col gap-3 sm:flex-row">
@@ -231,15 +231,15 @@ export default function App({ articles = [] }: Props) {
                   href="#areas"
                   className="rounded-full border border-white/45 px-7 py-3.5 text-center text-sm font-medium text-white transition hover:bg-white/10"
                 >
-                  Conocer Ã¡reas legales
+                  Conocer áreas legales
                 </a>
               </div>
 
               <div className="flex flex-wrap gap-x-10 gap-y-5 border-t border-white/18 pt-7 text-white">
                 {[
-                  ["01", "EvaluaciÃ³n clara"],
+                  ["01", "Evaluación clara"],
                   ["02", "Estrategia legal"],
-                  ["03", "AcompaÃ±amiento"],
+                  ["03", "Acompañamiento"],
                   ["04", "Seguimiento"],
                 ].map(([k, v]) => (
                   <div key={v}>
@@ -256,7 +256,7 @@ export default function App({ articles = [] }: Props) {
         </div>
       </section>
 
-      {/* Section 2 â€” Competencias */}
+      {/* Section 2 — Competencias */}
       <section id="areas" className="w-full py-24 lg:py-32" style={{ backgroundColor: WHITE }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="max-w-3xl mb-16">
@@ -264,7 +264,7 @@ export default function App({ articles = [] }: Props) {
               className="uppercase mb-4"
               style={{ color: MUTED, letterSpacing: "0.25em", fontSize: "0.75rem", fontWeight: 500 }}
             >
-              Ãreas de prÃ¡ctica
+              Áreas de práctica
             </p>
             <h2
               style={{
@@ -275,7 +275,7 @@ export default function App({ articles = [] }: Props) {
                 lineHeight: 1.15,
               }}
             >
-              Competencias jurÃ­dicas <span style={{ color: MUTED }}>especializadas en cada etapa de la vida.</span>
+              Competencias jurídicas <span style={{ color: MUTED }}>especializadas en cada etapa de la vida.</span>
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -309,7 +309,7 @@ export default function App({ articles = [] }: Props) {
         </div>
       </section>
 
-      {/* Section 3 â€” Proceso */}
+      {/* Section 3 — Proceso */}
       <section id="proceso" className="w-full py-24 lg:py-32" style={{ backgroundColor: SOFT }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12">
           <div className="max-w-3xl mb-20">
@@ -317,7 +317,7 @@ export default function App({ articles = [] }: Props) {
               className="uppercase mb-4"
               style={{ color: MUTED, letterSpacing: "0.25em", fontSize: "0.75rem", fontWeight: 500 }}
             >
-              Nuestro mÃ©todo
+              Nuestro método
             </p>
             <h2
               style={{
@@ -328,7 +328,7 @@ export default function App({ articles = [] }: Props) {
                 lineHeight: 1.15,
               }}
             >
-              Un proceso transparente, <span style={{ color: MUTED }}>diseÃ±ado para acompaÃ±arle paso a paso.</span>
+              Un proceso transparente, <span style={{ color: MUTED }}>diseñado para acompañarle paso a paso.</span>
             </h2>
           </div>
 
@@ -371,7 +371,7 @@ export default function App({ articles = [] }: Props) {
         </div>
       </section>
 
-      {/* Section 4 â€” GarantÃ­as + form */}
+      {/* Section 4 — Garantías + form */}
       <section id="contacto" className="w-full py-24 lg:py-32" style={{ backgroundColor: WHITE }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
           <div>
@@ -379,7 +379,7 @@ export default function App({ articles = [] }: Props) {
               className="uppercase mb-4"
               style={{ color: MUTED, letterSpacing: "0.25em", fontSize: "0.75rem", fontWeight: 500 }}
             >
-              GarantÃ­as
+              Garantías
             </p>
             <h2
               style={{
@@ -391,7 +391,7 @@ export default function App({ articles = [] }: Props) {
               }}
               className="mb-12"
             >
-              Tranquilidad <span style={{ fontStyle: "italic", color: SECURITY_GREEN }}>en cada decisiÃ³n.</span>
+              Tranquilidad <span style={{ fontStyle: "italic", color: SECURITY_GREEN }}>en cada decisión.</span>
             </h2>
             <ul className="space-y-8">
               {garantias.map((g) => {
@@ -482,12 +482,12 @@ export default function App({ articles = [] }: Props) {
               <span style={{ fontWeight: 400 }}>ABOGADAS</span>
             </div>
             <p style={{ color: TRUST_GRAY, fontSize: "0.9rem", lineHeight: 1.6, fontWeight: 400 }}>
-              Defensa jurÃ­dica especializada en derechos de la edad de oro.
+              Defensa jurídica especializada en derechos de la edad de oro.
             </p>
           </div>
           <div className="flex items-start gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
             <MapPin className="w-4 h-4 mt-1 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
-            <span>Av. Reforma 1245, Piso 12<br />Despacho JurÃ­dico</span>
+            <span>Av. Reforma 1245, Piso 12<br />Despacho Jurídico</span>
           </div>
           <div className="flex items-center gap-3" style={{ color: TRUST_GRAY, fontSize: "0.9rem" }}>
             <Phone className="w-4 h-4 shrink-0" style={{ color: AUTHORITY_BLUE }} strokeWidth={1.5} />
@@ -502,7 +502,7 @@ export default function App({ articles = [] }: Props) {
           className="text-center py-6"
           style={{ borderTop: `1px solid ${LINE}`, color: MUTED, fontSize: "0.85rem", fontWeight: 400 }}
         >
-          Â© 2026 Espinoza Mosqueda Abogadas. Todos los derechos reservados.
+          © 2026 Espinoza Mosqueda Abogadas. Todos los derechos reservados.
         </div>
       </footer>
     </div>
