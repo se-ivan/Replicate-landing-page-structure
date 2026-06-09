@@ -27,14 +27,18 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
       className={`fixed top-0 left-0 w-full z-50 px-6 md:px-12 lg:px-20 flex items-center justify-between transition-all duration-500 ${
         scrolled
           ? "py-3 bg-[#f5f2ec]/92 backdrop-blur-sm text-[#1a2e1a] border-b border-[#1a2e1a]/10 shadow-sm"
-          : "py-5 bg-transparent text-white"
+          : "py-[30px] bg-transparent text-white"
       }`}
     >
       <div className="flex items-center gap-2">
         <img
           src="/logo.svg"
           alt="Plenitud Emocional"
-          className={`h-8 md:h-12 w-auto ${scrolled ? "" : "filter brightness-0 invert"}`}
+          className={`w-auto transition-all duration-500 ${
+            scrolled
+              ? "h-8 md:h-12"
+              : "h-12 md:h-[72px] filter brightness-0 invert"
+          }`}
         />
       </div>
       <div className="hidden md:flex items-center gap-8 text-sm font-['Inter']">
@@ -61,7 +65,15 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
         onClick={() => setOpen(!open)}
         aria-label={open ? "Cerrar menú" : "Abrir menú"}
       >
-        <img src="/logo.svg" alt="Abrir menú" className={`h-6 w-6 ${scrolled ? "" : "filter brightness-0 invert"}`} />
+        <img
+          src="/logo.svg"
+          alt="Abrir menú"
+          className={`transition-all duration-500 ${
+            scrolled
+              ? "h-6 w-6"
+              : "h-9 w-9 filter brightness-0 invert"
+          }`}
+        />
       </button>
       {open && (
         <div
