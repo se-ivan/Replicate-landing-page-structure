@@ -4,7 +4,7 @@ export function HeroSection() {
   return (
     <section id="inicio" className="relative w-full min-h-screen overflow-hidden">
       <img src="/images/hero/hero-bg.jpg" alt="Adultos mayores" className="absolute inset-0 w-full h-full object-cover" />
-      <div className="absolute inset-0 bg-black/40" />
+      <div className="absolute inset-0 bg-black/20" />
 
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center text-white sr" data-sr-delay="0">
         <h1 className="font-['Inter'] text-4xl md:text-6xl lg:text-7xl leading-tight max-w-5xl">
