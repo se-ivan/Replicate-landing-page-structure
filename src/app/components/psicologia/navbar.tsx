@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { Menu, X } from "lucide-react";
 
-const links = [
+const links: { label: string; href: string; dropdown?: { label: string; href: string }[] }[] = [
   { label: "Inicio", href: "/" },
   { label: "Acerca de", href: "#acerca" },
-  { label: "Terapia grupal", href: "#terapia-grupal" },
-  { label: "Terapia individual", href: "#terapia-individual" },
-  { label: "Psicología general", href: "#psicologia-general" },
+  {
+    label: "Servicios",
+    href: "#servicios",
+    dropdown: [
+      { label: "Terapia individual", href: "/articulos/terapia-individual-adultez-mayor" },
+      { label: "Terapia grupal", href: "/articulos/terapia-grupal-adultez-mayor" },
+      { label: "Psicología general", href: "/articulos/depresion-no-es-normal-envejecimiento" },
+    ],
+  },
   { label: "Contacto", href: "#contacto" },
 ];
 
@@ -54,16 +60,57 @@ export function Navbar() {
         </a>
 
         <nav className="hidden md:flex items-center gap-9">
-          {links.map((l) => (
-            <a
-              key={l.label}
-              href={l.href}
-              className={`transition-colors hover:opacity-70 ${textColor}`}
-              style={{ fontSize: "0.9rem" }}
-            >
-              {l.label}
-            </a>
-          ))}
+          {links.map((l) => {
+            if (l.dropdown) {
+              return (
+                <div key={l.label} className="relative group py-2">
+                  <a
+                    href={l.href}
+                    className={`flex items-center gap-1 transition-colors hover:opacity-70 ${textColor}`}
+                    style={{ fontSize: "0.9rem" }}
+                  >
+                    {l.label}
+                    <svg
+                      className="w-3.5 h-3.5 transition-transform duration-300 group-hover:rotate-180 opacity-70"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2.5}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </a>
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 pt-2 w-56 opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto transition-all duration-300">
+                    <div className="bg-white rounded-2xl shadow-xl border border-black/5 overflow-hidden py-2">
+                      {l.dropdown.map((item) => (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          className="block px-5 py-3 text-sm text-[#1C4432] hover:bg-[#F7F5F0] transition-colors"
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            }
+            return (
+              <a
+                key={l.label}
+                href={l.href}
+                className={`transition-colors hover:opacity-70 ${textColor}`}
+                style={{ fontSize: "0.9rem" }}
+              >
+                {l.label}
+              </a>
+            );
+          })}
         </nav>
 
         <a
@@ -94,16 +141,43 @@ export function Navbar() {
           className="md:hidden bg-white border-t border-black/5 overflow-hidden"
         >
           <div className="px-6 py-4 flex flex-col gap-4">
-            {links.map((l) => (
-              <a
-                key={l.label}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="text-[#1C4432]"
-              >
-                {l.label}
-              </a>
-            ))}
+            {links.map((l) => {
+              if (l.dropdown) {
+                return (
+                  <div key={l.label} className="flex flex-col gap-2">
+                    <a
+                      href={l.href}
+                      onClick={() => setOpen(false)}
+                      className="text-[#1C4432] font-semibold"
+                    >
+                      {l.label}
+                    </a>
+                    <div className="pl-4 flex flex-col gap-2.5 border-l border-[#1C4432]/10">
+                      {l.dropdown.map((item) => (
+                        <a
+                          key={item.label}
+                          href={item.href}
+                          onClick={() => setOpen(false)}
+                          className="text-[#1C4432]/75 text-sm hover:text-[#1C4432] transition-colors"
+                        >
+                          {item.label}
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <a
+                  key={l.label}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="text-[#1C4432]"
+                >
+                  {l.label}
+                </a>
+              );
+            })}
             <a
               href="#contacto"
               onClick={() => setOpen(false)}
