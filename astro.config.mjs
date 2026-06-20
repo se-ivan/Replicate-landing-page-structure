@@ -18,6 +18,7 @@ function figmaAssetResolver() {
 }
 
 export default defineConfig({
+  site: "https://plenitudemocional.com",
   output: "server",
   adapter: vercel(),
   security: {

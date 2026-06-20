@@ -380,6 +380,150 @@ export const articles: Article[] = [
     id: "apoyo-a-familiares-y-cuidadores",
     title: "Apoyo a familiares y cuidadores",
     desc: "Cuidar también implica cuidarse: apoyo, descanso y comunicación clara previenen el agotamiento.",
+    img: "https://images.unsplash.com/photo-1749325390269-b9764b27f613?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+    intro:
+      "Muchas personas creen que sentirse tristes o solas es algo normal en esta etapa de la vida. Pero vivir con depresión no debe aceptarse como algo inevitable.",
+    sections: [
+      {
+        heading: "Con apoyo es posible sentirse mejor",
+        paragraphs: [
+          "Con apoyo psicológico adecuado es posible recuperar tranquilidad, motivación y bienestar emocional.",
+          "Pedir ayuda también es una forma de cuidarse.",
+        ],
+      },
+      {
+        heading: "¿Cómo ayuda la terapia psicológica?",
+        paragraphs: [
+          "El acompañamiento psicológico ofrece un espacio seguro para hablar de lo que duele, ordenar emociones y recuperar recursos personales.",
+        ],
+        bullets: [
+          "Expresar emociones guardadas",
+          "Disminuir tristeza y ansiedad",
+          "Recuperar el interés por la vida",
+          "Mejorar la comunicación familiar",
+          "Sentirse acompañado y comprendido",
+          "Fortalecer autoestima y seguridad emocional",
+        ],
+      },
+      {
+        heading: "No espere a sentirse peor para buscar apoyo",
+        paragraphs: [
+          "Muchas personas pasan meses o años viviendo en silencio con tristeza, soledad o preocupación.",
+          "Entre más pronto se reciba apoyo, mayores son las posibilidades de sentirse mejor emocionalmente y recuperar calidad de vida.",
+          "Usted merece sentirse escuchado, acompañado y emocionalmente tranquilo.",
+        ],
+      },
+      {
+        heading: "Agenda hoy su espacio de acompañamiento",
+        paragraphs: [
+          "Reciba atención cálida y respetuosa en un espacio seguro, confidencial y especializado en adultos mayores.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "envejecimiento-y-emociones",
+    title: "Envejecimiento y Emociones",
+    desc: "Comprender la adaptación emocional en la jubilación y la vejez ayuda a sostener bienestar y autonomía.",
+    audience: "ambos",
+    tags: ["Psicología", "Jubilación", "Salud Mental"],
+    img: "/images/articles/prepararte-jubilacion.png",
+    intro:
+      "El envejecimiento es un proceso dinámico que transforma rutinas, roles e identidad. No se trata solo de edad cronológica, sino de cómo cada persona reorganiza su vida emocional frente a cambios físicos, sociales y económicos.",
+    sections: [
+      {
+        heading: "Reconfiguración de la identidad",
+        paragraphs: [
+          "La jubilación suele cerrar una etapa de reconocimiento social ligada al trabajo. Cuando ese rol desaparece, muchas personas atraviesan una transición interna marcada por preguntas sobre propósito y pertenencia.",
+          "Este ajuste no es lineal: puede pasar por entusiasmo inicial, desencanto, reorientación y finalmente estabilización. Identificar estas fases reduce culpa y permite pedir apoyo a tiempo.",
+        ],
+      },
+      {
+        heading: "Ansiedad en la vejez",
+        paragraphs: [
+          "La ansiedad puede presentarse como miedo a perder independencia, preocupación por la salud o incertidumbre económica. A veces se confunde con síntomas físicos o con deterioro cognitivo, retrasando su abordaje.",
+          "Una percepción negativa del envejecimiento incrementa el malestar. En cambio, cuando se fortalece la resiliencia y una mirada activa sobre la etapa vital, la ansiedad disminuye y mejora la funcionalidad cotidiana.",
+        ],
+      },
+      {
+        heading: "Intervenciones útiles",
+        paragraphs: [
+          "La atención integral combina terapia psicológica, seguimiento médico y hábitos sostenibles. La terapia cognitivo-conductual puede ayudar a reformular pensamientos de pérdida y a construir estrategias de afrontamiento.",
+          "El ejercicio regular, una rutina de sueño estable y prácticas de relajación también contribuyen a reducir tensión emocional y mejorar calidad de vida.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "envejecer-con-plenitud",
+    title: "Envejecer con plenitud",
+    desc: "La plenitud en esta etapa se construye con propósito, vínculos y participación activa en la comunidad.",
+    audience: "ambos",
+    tags: ["Plenitud", "Resiliencia", "Envejecimiento Activo"],
+    img: "/images/articles/protege-bienes.png",
+    intro:
+      "Envejecer con plenitud no implica negar los cambios, sino integrarlos con sentido. La resiliencia puede desarrollarse en cualquier momento de la vida y es uno de los mejores predictores de bienestar en la adultez mayor.",
+    sections: [
+      {
+        heading: "Participación social significativa",
+        paragraphs: [
+          "Las conexiones sociales protegen contra el aislamiento y favorecen la salud mental. Participar en grupos, actividades cívicas o voluntariado fortalece la autoestima y renueva objetivos personales.",
+          "El envejecimiento activo incluye participación social, cultural y comunitaria, más allá de la actividad física.",
+        ],
+      },
+      {
+        heading: "Estimulación física e intelectual",
+        paragraphs: [
+          "Caminar, bailar o realizar ejercicios de fuerza de forma adaptada mejora equilibrio, movilidad e independencia. En paralelo, aprender nuevas habilidades sostiene la agilidad cognitiva.",
+          "La continuidad de rutinas de aprendizaje también favorece la motivación y el sentido de logro.",
+        ],
+      },
+      {
+        heading: "Autonomía con dignidad",
+        paragraphs: [
+          "Preservar la capacidad de decisión en asuntos cotidianos es clave para la dignidad. Evitar la infantilización y promover elecciones reales fortalece identidad y bienestar emocional.",
+          "La plenitud también necesita entornos accesibles y redes familiares que acompañen sin anular la autonomía.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "consejos-para-envejecer",
+    title: "Consejos para envejecer",
+    desc: "Acciones sencillas en casa y en hábitos diarios pueden mejorar seguridad, energía y confianza.",
+    audience: "ambos",
+    tags: ["Bienestar", "Autonomía", "Prevención"],
+    img: "/images/articles/cambio-identidad.png",
+    intro:
+      "La calidad de vida en la adultez mayor mejora cuando el entorno y la rutina diaria se adaptan de forma práctica. Pequeños cambios sostenidos tienen un impacto acumulativo alto.",
+    sections: [
+      {
+        heading: "Hogar seguro y funcional",
+        paragraphs: [
+          "Instalar pasamanos, reforzar iluminación y evitar superficies resbalosas reduce caídas y mejora independencia. La seguridad física es base de la tranquilidad emocional.",
+          "También conviene reorganizar espacios para facilitar movilidad y acceso a objetos de uso frecuente.",
+        ],
+      },
+      {
+        heading: "Hábitos de salud sostenibles",
+        paragraphs: [
+          "Una alimentación equilibrada y una rutina de sueño consistente ayudan a mantener energía y estabilidad emocional. Mantenerse hidratado y activo favorece función cognitiva y cardiovascular.",
+          "Los controles médicos periódicos permiten prevenir complicaciones y ajustar tratamientos oportunamente.",
+        ],
+      },
+      {
+        heading: "Tecnología como apoyo",
+        paragraphs: [
+          "Herramientas simples como recordatorios, asistentes de voz o videollamadas facilitan tareas diarias y fortalecen contacto social.",
+          "Usar tecnología de forma gradual y acompañada puede aumentar seguridad sin generar frustración.",
+        ],
+      },
+    ],
+  },
+  {
+    id: "apoyo-a-familiares-y-cuidadores",
+    title: "Apoyo a familiares y cuidadores",
+    desc: "Cuidar también implica cuidarse: apoyo, descanso y comunicación clara previenen el agotamiento.",
     audience: "ambos",
     tags: ["Cuidadores", "Familia", "Autocuidado"],
     img: "/images/articles/derechos-salud.png",
@@ -408,6 +552,77 @@ export const articles: Article[] = [
         ],
       },
     ],
+  },
+  {
+    id: "que-es-plenitud-emocional",
+    title: "¿Qué es la plenitud emocional y cómo alcanzarla en la vejez?",
+    desc: "Descubre qué es la plenitud emocional, su importancia durante la jubilación y vejez, y cómo nuestro acompañamiento te ayuda a vivir con tranquilidad.",
+    audience: "ambos",
+    tags: ["Plenitud Emocional", "Adultos Mayores", "Bienestar Emocional"],
+    img: "https://images.unsplash.com/photo-1632685236331-42a5a6913025?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+    intro:
+      "La plenitud emocional en la adultez mayor es un estado de bienestar donde la persona logra integrar los cambios de la vida con aceptación, propósito y serenidad. No significa la ausencia de dificultades, sino la capacidad de afrontarlas con resiliencia y apoyo adecuado.",
+    sections: [
+      {
+        heading: "¿Qué significa vivir con plenitud emocional?",
+        paragraphs: [
+          "A diferencia de lo que se suele pensar, la plenitud emocional no consiste en experimentar únicamente felicidad o alegría constante. Se trata de un equilibrio interno que nos permite aceptar nuestras emociones —tanto las agradables como las difíciles— y adaptarnos con serenidad a las nuevas circunstancias.",
+          "En la adultez mayor, esto implica reconciliarse con el pasado, valorar el presente y mirar hacia el futuro con tranquilidad, sabiendo que cada día sigue ofreciendo oportunidades para aprender y conectar con los demás."
+        ]
+      },
+      {
+        heading: "El papel de la jubilación y el retiro",
+        paragraphs: [
+          "La jubilación representa un cambio drástico en la rutina diaria y en la identidad laboral. Muchas personas sienten un vacío o pérdida de propósito al dejar de trabajar.",
+          "Cultivar la plenitud emocional en esta etapa significa redefinir quiénes somos fuera del ámbito laboral, descubrir nuevas pasiones, y entender el retiro no como un final, sino como una fase de transformación activa y valiosa."
+        ]
+      },
+      {
+        heading: "Pilares para fortalecer tu bienestar",
+        paragraphs: [
+          "Existen acciones concretas que puedes implementar a diario para fortalecer tu bienestar y tranquilidad emocional:"
+        ],
+        bullets: [
+          "Mantener conexiones sociales activas con familiares, amigos o grupos de apoyo.",
+          "Establecer una rutina diaria con actividades significativas y recreativas.",
+          "Expresar de manera abierta y segura tus sentimientos y necesidades.",
+          "Solicitar acompañamiento profesional cuando la tristeza o la preocupación sean difíciles de manejar."
+        ]
+      }
+    ]
+  },
+  {
+    id: "acompanamiento-legal-psicologico-adultos-mayores",
+    title: "Acompañamiento legal y psicológico para adultos mayores: Seguridad y bienestar",
+    desc: "Conoce por qué la integración del apoyo legal y el acompañamiento psicológico es vital para proteger los derechos y la paz de los adultos mayores.",
+    audience: "ambos",
+    tags: ["Adultos Mayores", "Acompañamiento Legal", "Acompañamiento Psicológico"],
+    img: "https://images.unsplash.com/photo-1753362594001-60c847cab56a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
+    intro:
+      "Envejecer con dignidad y tranquilidad requiere proteger tanto nuestra estabilidad legal como nuestra salud mental. El acompañamiento integral brinda la seguridad de que nuestros derechos están resguardados mientras transitamos las emociones propias de esta gran etapa.",
+    sections: [
+      {
+        heading: "El cuidado emocional: Acompañamiento psicológico",
+        paragraphs: [
+          "La vejez y la jubilación traen consigo duelos por pérdidas de seres queridos, cambios en la salud o pérdida de la rutina de trabajo. Esto puede detonar sentimientos de soledad, ansiedad o depresión.",
+          "El acompañamiento psicológico especializado ayuda a procesar estas emociones en un entorno seguro y confidencial, previniendo el aislamiento y devolviendo el sentido de autonomía y valía personal."
+        ]
+      },
+      {
+        heading: "La tranquilidad patrimonial: Acompañamiento legal",
+        paragraphs: [
+          "La seguridad jurídica es fundamental para evitar preocupaciones innecesarias en el futuro. Contar con orientación legal profesional permite a los adultos mayores tomar decisiones libres e informadas sobre sus bienes y derechos.",
+          "Temas como la elaboración de testamentos, la designación de tutores preventivos y la protección ante abusos patrimoniales garantizan que la voluntad de la persona sea respetada en todo momento."
+        ]
+      },
+      {
+        heading: "La sinergia perfecta: Paz mental y seguridad legal",
+        paragraphs: [
+          "Cuando una persona mayor sabe que su patrimonio está protegido y sus derechos legales están seguros, se libera de una carga mental enorme, lo cual impacta positivamente en su salud mental.",
+          "En Plenitud Emocional unimos ambas disciplinas para ofrecer una atención humana, profesional y multidisciplinaria que asegura que tú o tus seres queridos puedan disfrutar de la edad de oro con plenitud absoluta."
+        ]
+      }
+    ]
   },
 ];
 

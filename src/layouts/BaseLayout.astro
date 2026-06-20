@@ -29,6 +29,72 @@ const fullTitle = title.includes(siteName) ? title : `${title} | ${siteName}`;
 const canonicalUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 const ogImage = Astro.site ? new URL(image, Astro.site).href : image;
 const robots = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:large";
+
+const isArticle = type === "article";
+const isLegalPage = Astro.url.pathname.includes("/abogados");
+const isPsychologyPage = Astro.url.pathname.includes("/psicologia");
+
+let schema: Record<string, any> = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Plenitud Emocional",
+  "url": "https://plenitudemocional.com",
+  "logo": "https://plenitudemocional.com/logo.svg",
+  "description": "Acompañamiento psicológico y orientación legal para personas adultas mayores y sus familias."
+};
+
+if (isArticle) {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": title,
+    "description": description,
+    "image": ogImage,
+    "url": canonicalUrl || `https://plenitudemocional.com${Astro.url.pathname}`,
+    "publisher": {
+      "@type": "Organization",
+      "name": "Plenitud Emocional",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://plenitudemocional.com/logo.svg"
+      }
+    }
+  };
+} else if (isLegalPage) {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "LegalService",
+    "name": "Espinoza Mosqueda Abogadas | Plenitud Emocional",
+    "url": "https://plenitudemocional.com/abogados",
+    "logo": "https://plenitudemocional.com/logo.svg",
+    "image": "https://plenitudemocional.com/images/hero/hero-abogados.jpg",
+    "description": description,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Morelia",
+      "addressRegion": "Michoacán",
+      "addressCountry": "MX"
+    },
+    "telephone": "+524431399471"
+  };
+} else if (isPsychologyPage) {
+  schema = {
+    "@context": "https://schema.org",
+    "@type": "MedicalBusiness",
+    "name": "Psicología Catalina Gallegos | Plenitud Emocional",
+    "url": "https://plenitudemocional.com/psicologia",
+    "logo": "https://plenitudemocional.com/logo.svg",
+    "image": "https://plenitudemocional.com/images/hero/hero-bg.jpg",
+    "description": description,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Morelia",
+      "addressRegion": "Michoacán",
+      "addressCountry": "MX"
+    },
+    "telephone": "+524431399471"
+  };
+}
 ---
 
 <!doctype html>
@@ -65,16 +131,7 @@ const robots = noindex ? "noindex,nofollow" : "index,follow,max-image-preview:la
     <meta name="theme-color" content="#1a2e1a" />
 
     <!-- Google Structured Data (JSON-LD) -->
-    <script type="application/ld+json">
-      {`{
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Plenitud Emocional",
-        "url": "https://plenitudemocional.com",
-        "logo": "https://plenitudemocional.com/logo.svg",
-        "description": "Acompañamiento psicológico y orientación legal para personas adultas mayores y sus familias."
-      }`}
-    </script>
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
   </head>
   <body class={bodyClass}>
     <slot />
