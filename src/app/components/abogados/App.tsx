@@ -92,14 +92,18 @@ function LegalNavbar() {
       className={`fixed top-0 left-0 z-50 flex w-full items-center justify-between px-6 transition-all duration-500 md:px-12 lg:px-20 ${
         scrolled
           ? "bg-[#f5f2ec]/92 py-3 text-[#1a2e1a] shadow-sm backdrop-blur-sm border-b border-[#1a2e1a]/10"
-          : "bg-transparent py-5 text-white"
+          : "bg-transparent py-[30px] text-white"
       }`}
     >
       <a href="/" className="flex items-center gap-3" aria-label="Ir al inicio de Plenitud Emocional">
         <img
           src="/logo.svg"
           alt="Plenitud Emocional"
-          className={`h-8 w-auto md:h-12 ${scrolled ? "" : "filter brightness-0 invert"}`}
+          className={`w-auto transition-all duration-500 ${
+            scrolled
+              ? "h-8 md:h-12"
+              : "h-12 md:h-[72px] filter brightness-0 invert"
+          }`}
         />
       </a>
 

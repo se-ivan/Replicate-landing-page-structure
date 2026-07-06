@@ -36,18 +36,22 @@ export function Navbar() {
       initial={{ y: -40, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: "easeOut" }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+      className={`fixed top-0 left-0 right-0 z-50 px-6 md:px-12 lg:px-20 transition-all duration-500 ${
         scrolled
           ? "bg-white/85 backdrop-blur-md border-b border-black/5 py-3"
-          : "bg-transparent py-5"
+          : "bg-transparent py-[30px]"
       }`}
     >
-      <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
+      <div className="w-full flex items-center justify-between">
         <a href="#inicio" className="flex items-center gap-3">
           <img
             src="/logo.svg"
             alt="Logo"
-            className={`transition-all duration-500 ${scrolled ? "h-9" : "h-11 brightness-0 invert"}`}
+            className={`w-auto transition-all duration-500 ${
+              scrolled
+                ? "h-8 md:h-12"
+                : "h-12 md:h-[72px] brightness-0 invert"
+            }`}
           />
           <div className="hidden sm:block leading-tight">
             <div className={`tracking-wide transition-colors ${textColor}`} style={{ fontSize: "0.95rem", fontWeight: 500 }}>
