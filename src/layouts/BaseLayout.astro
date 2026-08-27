@@ -40,7 +40,15 @@ let schema: Record<string, any> = {
   "name": "Plenitud Emocional",
   "url": "https://plenitudemocional.com",
   "logo": "https://plenitudemocional.com/logo.svg",
-  "description": "Acompañamiento psicológico y orientación legal para personas adultas mayores y sus familias."
+  "description": "Acompañamiento psicológico y orientación legal para personas adultas mayores y sus familias.",
+  "telephone": "+524439446738",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Calle Corregidora 1156 Int. 2 Centro",
+    "addressLocality": "Morelia",
+    "addressRegion": "Michoacán",
+    "addressCountry": "MX"
+  }
 };
 
 if (isArticle) {
@@ -64,35 +72,37 @@ if (isArticle) {
   schema = {
     "@context": "https://schema.org",
     "@type": "LegalService",
-    "name": "Espinoza Mosqueda Abogadas | Plenitud Emocional",
+    "name": "Plenitud Emocional — Área Legal",
     "url": "https://plenitudemocional.com/abogados",
     "logo": "https://plenitudemocional.com/logo.svg",
     "image": "https://plenitudemocional.com/images/hero/hero-abogados.jpg",
     "description": description,
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Calle Corregidora 1156 Int. 2 Centro",
       "addressLocality": "Morelia",
       "addressRegion": "Michoacán",
       "addressCountry": "MX"
     },
-    "telephone": "+524431399471"
+    "telephone": "+524439446738"
   };
 } else if (isPsychologyPage) {
   schema = {
     "@context": "https://schema.org",
     "@type": "MedicalBusiness",
-    "name": "Psicología Catalina Gallegos | Plenitud Emocional",
+    "name": "Plenitud Emocional — Área Psicológica",
     "url": "https://plenitudemocional.com/psicologia",
     "logo": "https://plenitudemocional.com/logo.svg",
     "image": "https://plenitudemocional.com/images/hero/hero-bg.jpg",
     "description": description,
     "address": {
       "@type": "PostalAddress",
+      "streetAddress": "Calle Corregidora 1156 Int. 2 Centro",
       "addressLocality": "Morelia",
       "addressRegion": "Michoacán",
       "addressCountry": "MX"
     },
-    "telephone": "+524431399471"
+    "telephone": "+524439446738"
   };
 }
 ---

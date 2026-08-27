@@ -17,6 +17,10 @@ import {
   Accessibility,
   Menu,
   X,
+  Phone,
+  MapPin,
+  Mail,
+  MessageCircle,
 } from "lucide-react";
 
 const AUTHORITY_BLUE = "#0F2A47";
@@ -180,7 +184,7 @@ export default function App({ articles = [] }: Props) {
         >
           <ImageWithFallback
             src="/images/hero/hero-abogados.jpg"
-            alt="Oficina de Espinoza Mosqueda Abogadas"
+            alt="Orientación Legal Plenitud Emocional"
             className="absolute inset-0 w-full h-full object-cover"
           />
           <div
@@ -218,7 +222,7 @@ export default function App({ articles = [] }: Props) {
                 className="mb-9 max-w-2xl text-white/88"
                 style={{ lineHeight: 1.7, fontSize: "1.05rem", fontWeight: 400 }}
               >
-                Espinoza Mosqueda Abogadas acompaña a personas adultas mayores y sus familias con orientación legal clara, trato humano y protección de sus derechos.
+                En Plenitud Emocional acompañamos a personas adultas mayores y sus familias con orientación legal clara, trato humano y protección de sus derechos.
               </p>
 
               <div className="mb-12 flex flex-col gap-3 sm:flex-row">
@@ -373,7 +377,7 @@ export default function App({ articles = [] }: Props) {
       </section>
 
       {/* Section 4 — Garantías */}
-      <section id="contacto" className="w-full py-24 lg:py-32" style={{ backgroundColor: WHITE }}>
+      <section id="garantias" className="w-full py-24 lg:py-32" style={{ backgroundColor: WHITE }}>
         <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div>
             <p
@@ -429,6 +433,78 @@ export default function App({ articles = [] }: Props) {
               className="absolute inset-0 h-full w-full object-cover object-center"
             />
           </figure>
+        </div>
+      </section>
+
+      {/* Section 5 — Contacto */}
+      <section id="contacto" className="w-full py-20 lg:py-24" style={{ backgroundColor: AUTHORITY_BLUE }}>
+        <div className="max-w-7xl mx-auto px-6 lg:px-12 text-white">
+          <div className="max-w-3xl mx-auto text-center">
+            <p
+              className="uppercase mb-3 text-white/70"
+              style={{ letterSpacing: "0.25em", fontSize: "0.75rem", fontWeight: 500 }}
+            >
+              Plenitud Emocional · Orientación Legal
+            </p>
+            <h2
+              className="mb-6 font-['Playfair_Display'] text-3xl md:text-5xl text-white leading-tight"
+            >
+              ¿Tienes dudas sobre tus derechos o trámites legales?
+            </h2>
+            <p className="text-white/80 text-base md:text-lg mb-10 max-w-2xl mx-auto leading-relaxed">
+              Te brindamos asesoría jurídica clara y personalizada en Morelia, protegiendo lo que más valoras con absoluta confidencialidad.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-12 text-left">
+              <a
+                href="tel:+524439446738"
+                className="p-6 rounded-2xl bg-white/10 border border-white/15 hover:bg-white/15 transition flex flex-col gap-2 group"
+              >
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition">
+                  <Phone className="w-5 h-5 text-[#E9D9B8]" />
+                </div>
+                <div className="text-xs text-white/60 font-medium">Llámanos o WhatsApp</div>
+                <div className="text-sm font-semibold text-white">+52 443 944 6738</div>
+              </a>
+
+              <div className="p-6 rounded-2xl bg-white/10 border border-white/15 flex flex-col gap-2">
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
+                  <MapPin className="w-5 h-5 text-[#E9D9B8]" />
+                </div>
+                <div className="text-xs text-white/60 font-medium">Ubicación</div>
+                <div className="text-sm text-white/90">Calle Corregidora 1156 Int. 2 Centro, Morelia</div>
+              </div>
+
+              <a
+                href="mailto:contacto@plenitudemocional.com"
+                className="p-6 rounded-2xl bg-white/10 border border-white/15 hover:bg-white/15 transition flex flex-col gap-2 group"
+              >
+                <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center group-hover:bg-white/20 transition">
+                  <Mail className="w-5 h-5 text-[#E9D9B8]" />
+                </div>
+                <div className="text-xs text-white/60 font-medium">Correo Electrónico</div>
+                <div className="text-sm font-semibold text-white break-all">contacto@plenitudemocional.com</div>
+              </a>
+            </div>
+
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a
+                href="https://wa.me/524439446738"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 rounded-full bg-white px-8 py-3.5 text-sm font-semibold text-[#0F2A47] hover:bg-white/90 transition shadow-lg"
+              >
+                <MessageCircle className="w-4 h-4" />
+                Consulta por WhatsApp
+              </a>
+              <a
+                href="/agendar"
+                className="inline-flex items-center gap-2 rounded-full border border-white/40 px-8 py-3.5 text-sm font-medium text-white hover:bg-white/10 transition"
+              >
+                Agendar Cita en Línea
+              </a>
+            </div>
+          </div>
         </div>
       </section>
 

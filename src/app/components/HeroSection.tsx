@@ -1,5 +1,5 @@
 export function HeroSection() {
-  const whatsappHref = "https://wa.me/524431399471";
+  const whatsappHref = "https://wa.me/524439446738";
 
   return (
     <section id="inicio" className="relative w-full min-h-screen overflow-hidden">

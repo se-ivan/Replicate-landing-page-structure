@@ -1,10 +1,10 @@
 import { Scale, Heart, Users, Sparkles } from "lucide-react";
 
 const features = [
-  { icon: Scale, title: "Despacho Espinoza Mosqueda", desc: "Nuestro objetivo es que el Estado y la sociedad respeten, cuiden y apoyen a los adultos mayores." },
-  { icon: Heart, title: "Psicóloga Catalina Gallegos M.", desc: "Nos enfocamos en hacer de la jubilación una etapa de transformación, no una pérdida." },
-  { icon: Users, title: "Trabajo en equipo", desc: "Un equipo multidisciplinario en Morelia dedicado a proteger tus derechos y bienestar emocional." },
-  { icon: Sparkles, title: "Acompañamiento integral", desc: "Brindamos apoyo legal y psicológico para la etapa de la jubilación con calidez y profesionalismo." },
+  { icon: Scale, title: "Orientación Legal", desc: "Defensa y protección de derechos patrimoniales, pensiones y trámites para una vida con tranquilidad y certeza." },
+  { icon: Heart, title: "Acompañamiento Psicológico", desc: "Cuidado de la salud emocional y terapia para hacer de la jubilación y la madurez una etapa de plenitud." },
+  { icon: Users, title: "Equipo Multidisciplinario", desc: "Especialistas en psicología y derecho en Morelia trabajando coordinados por tu bienestar integral." },
+  { icon: Sparkles, title: "Atención Integral", desc: "Brindamos respaldo profesional, humano y accesible en un solo lugar bajo la marca Plenitud Emocional." },
 ];
 
 export function DifferentSection() {

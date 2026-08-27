@@ -30,9 +30,9 @@ function Counter({ end, suffix = "", prefix = "" }: { end: number; suffix?: stri
 }
 
 const stats = [
-  { value: 12, suffix: "+", label: "Años de experiencia clínica" },
+  { value: 12, suffix: "+", label: "Años de experiencia y trayectoria" },
   { value: 100, suffix: "%", label: "Confidencialidad garantizada" },
-  { value: 500, suffix: "+", label: "Pacientes acompañados" },
+  { value: 500, suffix: "+", label: "Personas y familias acompañadas" },
 ];
 
 export function About() {
@@ -45,14 +45,14 @@ export function About() {
               ACERCA DE
             </div>
             <h2 className="text-[#1C4432] mb-8" style={{ fontSize: "clamp(2rem, 4vw, 3.25rem)", fontWeight: 400, lineHeight: 1.15 }}>
-              Soy <span className="italic">Catalina Gallegos Mosqueda</span>, psicóloga clínica.
+              En <span className="italic">Plenitud Emocional</span>, cuidamos de tu bienestar integral.
             </h2>
             <div className="space-y-5 text-[#3a3a3a]/75" style={{ fontSize: "1rem", lineHeight: 1.7 }}>
               <p>
-                Mi enfoque es cálido, empático y basado en evidencia. Acompaño a personas que atraviesan episodios de <span className="text-[#1C4432]">depresión</span>, <span className="text-[#1C4432]">ansiedad</span> y <span className="text-[#1C4432]">estrés</span>, trabajando contigo desde la escucha profunda y sin juicios.
+                Nuestro enfoque es cálido, empático y basado en evidencia. Acompañamos a personas y familias que atraviesan episodios de <span className="text-[#1C4432]">depresión</span>, <span className="text-[#1C4432]">ansiedad</span> y <span className="text-[#1C4432]">estrés</span>, trabajando contigo desde la escucha profunda y sin juicios.
               </p>
               <p>
-                Pedir ayuda es un acto de valentía. En cada sesión encontrarás un espacio donde tu historia importa, y donde construiremos juntos las herramientas para recuperar tu bienestar.
+                Pedir ayuda es un acto de valentía. En cada sesión encontrarás un espacio seguro y confidencial donde tu historia importa, y donde construiremos juntos las herramientas para recuperar tu bienestar.
               </p>
             </div>
           </FadeIn>

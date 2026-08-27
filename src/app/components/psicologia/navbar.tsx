@@ -46,7 +46,7 @@ export function Navbar() {
         <a href="#inicio" className="flex items-center gap-3">
           <img
             src="/logo.svg"
-            alt="Logo"
+            alt="Plenitud Emocional"
             className={`w-auto transition-all duration-500 ${
               scrolled
                 ? "h-8 md:h-12"
@@ -55,10 +55,10 @@ export function Navbar() {
           />
           <div className="hidden sm:block leading-tight">
             <div className={`tracking-wide transition-colors ${textColor}`} style={{ fontSize: "0.95rem", fontWeight: 500 }}>
-              Catalina Gallegos
+              Plenitud Emocional
             </div>
             <div className={`transition-colors ${subColor}`} style={{ fontSize: "0.7rem", letterSpacing: "0.15em" }}>
-              PSICÓLOGA CLÍNICA
+              ÁREA PSICOLÓGICA
             </div>
           </div>
         </a>

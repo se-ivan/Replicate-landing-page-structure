@@ -20,7 +20,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
 
   const sectionHref = (hash: string) => `${sectionPrefix}${hash}`;
   const blogHref = sectionPrefix ? "/articulos" : "#blog";
-  const whatsappHref = "https://wa.me/524431399471";
+  const whatsappHref = "https://wa.me/524439446738";
 
   return (
     <nav

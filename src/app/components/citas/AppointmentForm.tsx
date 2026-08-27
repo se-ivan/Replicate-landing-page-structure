@@ -246,7 +246,7 @@ export function AppointmentForm() {
               <input
                 id="telefono"
                 type="tel"
-                placeholder="Ej. 443 123 4567"
+                placeholder="Ej. 443 944 6738"
                 {...register("telefono", {
                   required: "El teléfono es requerido",
                   pattern: {
