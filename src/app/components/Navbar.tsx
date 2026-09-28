@@ -43,6 +43,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
       </div>
       <div className="hidden md:flex items-center gap-8 text-sm font-['Inter']">
         <a href={sectionHref("#inicio")} className="opacity-80 hover:opacity-100">Inicio</a>
+        <a href={sectionHref("#noticias")} className="opacity-80 hover:opacity-100">Noticias</a>
         <a href={sectionHref("#quienes-somos")} className="opacity-80 hover:opacity-100">Quiénes Somos</a>
         <a href={sectionHref("#servicios")} className="opacity-80 hover:opacity-100">Servicios</a>
         <a href="/psicologia" className="opacity-80 hover:opacity-100">Psicología</a>
@@ -84,6 +85,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
           }`}
         >
           <a href={sectionHref("#inicio")} onClick={() => setOpen(false)}>Inicio</a>
+          <a href={sectionHref("#noticias")} onClick={() => setOpen(false)}>Noticias</a>
           <a href={sectionHref("#quienes-somos")} onClick={() => setOpen(false)}>Quiénes Somos</a>
           <a href={sectionHref("#servicios")} onClick={() => setOpen(false)}>Servicios</a>
           <a href="/psicologia" onClick={() => setOpen(false)}>Psicología</a>

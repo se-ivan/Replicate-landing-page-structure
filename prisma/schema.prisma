@@ -59,3 +59,25 @@ model Article {
   @@index([actualizadoEn])
   @@index([audience])
 }
+
+model News {
+  id            String   @id @default(uuid())
+  title         String
+  summary       String
+  content       String   @default("")
+  category      String   @default("General")
+  imageUrl      String?
+  linkUrl       String?
+  linkText      String?  @default("Más información")
+  featured      Boolean  @default(false)
+  published     Boolean  @default(true)
+  publishedAt   DateTime @default(now())
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@index([creadoEn])
+  @@index([published])
+  @@index([publishedAt])
+  @@index([featured])
+}
+

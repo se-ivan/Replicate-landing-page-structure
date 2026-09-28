@@ -13,6 +13,7 @@ import {
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArticleManager } from "./ArticleManager";
+import { NewsManager } from "./NewsManager";
 
 interface Appointment {
   id: string;
@@ -64,7 +65,7 @@ function sortByTime(a: Appointment, b: Appointment) {
 }
 
 export function AdminDashboard() {
-  const [activeView, setActiveView] = useState<"appointments" | "articles">("appointments");
+  const [activeView, setActiveView] = useState<"appointments" | "articles" | "news">("appointments");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("todos");
@@ -177,11 +178,12 @@ export function AdminDashboard() {
         <div className="mb-8 flex flex-wrap gap-2">
           {[
             { id: "appointments", label: "Citas" },
-            { id: "articles", label: "Articulos" },
+            { id: "articles", label: "Artículos" },
+            { id: "news", label: "Noticias" },
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveView(item.id as "appointments" | "articles")}
+              onClick={() => setActiveView(item.id as "appointments" | "articles" | "news")}
               className={`px-4 py-2.5 rounded-xl text-sm font-['Inter'] font-medium transition-all ${
                 activeView === item.id
                   ? "bg-[#1a2e1a] text-white shadow-lg"
@@ -195,6 +197,8 @@ export function AdminDashboard() {
 
         {activeView === "articles" ? (
           <ArticleManager />
+        ) : activeView === "news" ? (
+          <NewsManager />
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

@@ -2,10 +2,12 @@
 import App from "../app/App";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getArticlesForExactAudience } from "../lib/articles";
+import { getPublishedNews } from "../lib/news";
 
 export const prerender = false;
 
 const articles = (await getArticlesForExactAudience("ambos")).slice(0, 4);
+const news = await getPublishedNews();
 ---
 
 <BaseLayout
@@ -14,5 +16,5 @@ const articles = (await getArticlesForExactAudience("ambos")).slice(0, 4);
   keywords="plenitud emocional, acompañamiento legal o psicologico para adultos mayores, psicologos adultos mayores morelia, abogados adultos mayores, plenitudemocional.com, acompañamiento emocional, jubilacion activa"
   image="/images/hero/hero-bg.jpg"
 >
-  <App articles={articles} client:load />
+  <App articles={articles} news={news} client:load />
 </BaseLayout>
