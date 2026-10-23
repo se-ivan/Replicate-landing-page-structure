@@ -1,299 +1,160 @@
-import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import { ArrowUpRight, Calendar, Sparkles, Tag, X } from "lucide-react";
-import { defaultNews, type NewsItem } from "../../data/news";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { ArrowUpRight, ChevronLeft, ChevronRight, ImageIcon, Maximize2, X } from "lucide-react";
+import { defaultNews, safeNewsUrl, type NewsItem } from "../../data/news";
 
 type Props = {
   news?: NewsItem[];
 };
 
-function formatDisplayDate(dateStr: string) {
-  try {
-    const d = new Date(dateStr);
-    return d.toLocaleDateString("es-MX", {
-      day: "numeric",
-      month: "short",
-      year: "numeric",
-    });
-  } catch {
-    return dateStr;
-  }
+function AnnouncementImage({ item, expanded = false }: { item: NewsItem; expanded?: boolean }) {
+  const [failedUrl, setFailedUrl] = useState<string | null>(null);
+  const imageUrl = safeNewsUrl(item.imageUrl);
+
+  return imageUrl && failedUrl !== imageUrl ? (
+    <img
+      src={imageUrl}
+      alt={item.title}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+      onError={() => setFailedUrl(imageUrl)}
+      className={expanded ? "mx-auto max-h-[70vh] w-full object-contain" : "h-full w-full object-contain"}
+    />
+  ) : (
+    <div className="flex h-full min-h-48 flex-col items-center justify-center gap-4 px-8 text-center text-[#1a2e1a]">
+      <ImageIcon className="h-10 w-10 text-[#8aaf7e]" aria-hidden="true" />
+      <span className="break-words font-['Playfair_Display'] text-2xl sm:text-3xl">{item.title}</span>
+    </div>
+  );
 }
 
 export function NewsSection({ news = defaultNews }: Props) {
-  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
-
-  // Filter only published news
-  const activeNews = news.filter((n) => n.published);
-
-  if (activeNews.length === 0) {
-    return null;
-  }
-
-  // Sort: featured first, then newest
-  const sortedNews = [...activeNews].sort((a, b) => {
-    if (a.featured && !b.featured) return -1;
-    if (!a.featured && b.featured) return 1;
+  const items = useMemo(() => news.filter((item) => item.published).sort((a, b) => {
+    if (a.featured !== b.featured) return a.featured ? -1 : 1;
     return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
-  });
+  }), [news]);
+  const [carouselRef, api] = useEmblaCarousel({ loop: items.length > 1 });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+  const selectedTrigger = useRef<HTMLButtonElement | null>(null);
+  const onSelect = useCallback(() => setSelectedIndex(api?.selectedScrollSnap() ?? 0), [api]);
 
-  const featured = sortedNews.find((n) => n.featured) || sortedNews[0];
-  const others = sortedNews.filter((n) => n.id !== featured.id).slice(0, 4);
+  useEffect(() => {
+    if (!api) return;
+    onSelect();
+    api.on("select", onSelect);
+    api.on("reInit", onSelect);
+    return () => {
+      api.off("select", onSelect);
+      api.off("reInit", onSelect);
+    };
+  }, [api, onSelect]);
+
+  if (items.length === 0) return null;
+
+  const currentIndex = Math.min(selectedIndex, items.length - 1);
+  const selectedLink = safeNewsUrl(selectedNews?.linkUrl);
+  const arrowClass = "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#d7dcd1] bg-white text-[#1a2e1a] transition hover:bg-[#edf1e8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]";
 
   return (
-    <section id="noticias" className="bg-[#f5f2ec] py-16 md:py-24 px-6 md:px-12 lg:px-20 sr" data-sr-delay="60">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 gap-6 border-b border-[#e5e0d8] pb-8">
+    <section id="noticias" aria-labelledby="announcements-title" className="scroll-mt-24 bg-[#f5f2ec] px-5 py-10 md:px-12 md:py-14 lg:px-20">
+      <div className="mx-auto max-w-5xl">
+        <div className="mb-6 flex items-end justify-between gap-4">
           <div>
-            <span className="font-['Inter'] text-xs md:text-sm text-[#1a2e1a]/70 tracking-[1.4px] uppercase font-semibold block mb-2">
-              [ Novedades y Avisos ]
-            </span>
-            <h2 className="font-['Playfair_Display'] text-3xl sm:text-4xl md:text-5xl text-[#1a2e1a] leading-tight font-medium">
-              ACTUALIDAD EN <span className="italic font-normal">PLENITUD</span>
-            </h2>
-            <p className="font-['Inter'] text-sm text-[#1a2e1a]/70 mt-3 max-w-xl leading-relaxed">
-              Comunicados, jornadas informativas, talleres y avisos relevantes para personas adultas mayores y sus familias en Morelia.
-            </p>
+            <p className="mb-2 font-['Inter'] text-xs font-semibold uppercase tracking-[1.8px] text-[#5a6b5a]">Mantente al día</p>
+            <h2 id="announcements-title" className="font-['Playfair_Display'] text-3xl font-medium text-[#1a2e1a] sm:text-4xl">Anuncios y actividades</h2>
           </div>
-
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-['Inter'] text-[#5a6b5a] bg-white border border-[#e5e0d8] px-3.5 py-1.5 rounded-full shadow-xs">
-              {activeNews.length} {activeNews.length === 1 ? "publicación activa" : "publicaciones activas"}
-            </span>
-          </div>
-        </div>
-
-        {/* Featured + Grid Layout */}
-        <div className="grid lg:grid-cols-12 gap-8 items-stretch">
-          {/* Main Featured Card */}
-          {featured && (
-            <div
-              onClick={() => setSelectedNews(featured)}
-              className="lg:col-span-7 bg-white rounded-3xl border border-[#e5e0d8] overflow-hidden flex flex-col cursor-pointer group shadow-sm hover:shadow-xl hover:border-[#2d5a27]/30 transition-all duration-300"
-            >
-              <div className="relative aspect-[16/10] sm:aspect-[16/9] w-full overflow-hidden bg-[#e5e0d8]">
-                {featured.imageUrl ? (
-                  <img
-                    src={featured.imageUrl}
-                    alt={featured.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                ) : (
-                  <div className="w-full h-full flex items-center justify-center bg-[#1a2e1a] text-white">
-                    <Sparkles className="w-12 h-12 opacity-40" />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none" />
-
-                {/* Badge Category & Featured */}
-                <div className="absolute top-4 left-4 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 font-['Inter'] text-xs font-medium text-white bg-[#1a2e1a]/85 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-                    <Tag className="w-3 h-3" /> {featured.category}
-                  </span>
-                  {featured.featured && (
-                    <span className="inline-flex items-center gap-1 font-['Inter'] text-xs font-medium text-[#1a2e1a] bg-[#8aaf7e] px-3 py-1.5 rounded-full shadow-xs">
-                      <Sparkles className="w-3 h-3" /> Destacada
-                    </span>
-                  )}
-                </div>
-
-                <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between text-white text-xs font-['Inter'] opacity-90">
-                  <span className="flex items-center gap-1.5">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {formatDisplayDate(featured.publishedAt)}
-                  </span>
-                </div>
-              </div>
-
-              <div className="p-6 sm:p-8 flex flex-col flex-1 justify-between">
-                <div>
-                  <h3 className="font-['Playfair_Display'] text-2xl sm:text-3xl text-[#1a2e1a] group-hover:text-[#2d5a27] transition font-bold leading-snug">
-                    {featured.title}
-                  </h3>
-                  <p className="font-['Inter'] text-sm sm:text-base text-[#1a2e1a]/70 mt-3 leading-relaxed">
-                    {featured.summary}
-                  </p>
-                </div>
-
-                <div className="mt-6 pt-5 border-t border-[#f0ede6] flex items-center justify-between">
-                  <span className="text-xs font-semibold font-['Inter'] text-[#1a2e1a] flex items-center gap-1.5 group-hover:translate-x-1 transition-transform">
-                    Leer comunicado completo
-                    <ArrowUpRight className="w-4 h-4 text-[#2d5a27]" />
-                  </span>
-
-                  {featured.linkUrl && (
-                    <a
-                      href={featured.linkUrl}
-                      onClick={(e) => e.stopPropagation()}
-                      target={featured.linkUrl.startsWith("http") ? "_blank" : undefined}
-                      rel="noreferrer"
-                      className="text-xs font-medium font-['Inter'] bg-[#1a2e1a] text-white px-4 py-2 rounded-full hover:bg-[#2d5a27] transition"
-                    >
-                      {featured.linkText || "Participar"}
-                    </a>
-                  )}
-                </div>
-              </div>
+          {items.length > 1 && (
+            <div className="flex gap-2">
+              <button type="button" onClick={() => api?.scrollPrev()} className={arrowClass} aria-label="Anuncio anterior"><ChevronLeft className="h-5 w-5" /></button>
+              <button type="button" onClick={() => api?.scrollNext()} className={arrowClass} aria-label="Anuncio siguiente"><ChevronRight className="h-5 w-5" /></button>
             </div>
           )}
+        </div>
 
-          {/* Companion Cards List */}
-          <div className="lg:col-span-5 flex flex-col gap-4 justify-between">
-            {others.length > 0 ? (
-              others.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => setSelectedNews(item)}
-                  className="bg-white rounded-2xl border border-[#e5e0d8] p-5 sm:p-6 flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between cursor-pointer group shadow-xs hover:shadow-md hover:border-[#2d5a27]/30 transition-all"
-                >
-                  {item.imageUrl && (
-                    <div className="w-full sm:w-28 sm:h-24 h-40 rounded-xl overflow-hidden shrink-0 bg-[#e5e0d8]">
-                      <img
-                        src={item.imageUrl}
-                        alt={item.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
+        <div
+          role="region"
+          aria-roledescription="carrusel"
+          aria-label="Anuncios de Plenitud Emocional"
+          tabIndex={items.length > 1 ? 0 : undefined}
+          className="rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]"
+          onKeyDown={(event) => {
+            if (event.target !== event.currentTarget) return;
+            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+              event.preventDefault();
+              if (event.key === "ArrowLeft") api?.scrollPrev();
+              else api?.scrollNext();
+            }
+          }}
+        >
+          <div ref={carouselRef} className="overflow-hidden rounded-2xl border border-[#e5e0d8] bg-white">
+            <div className="flex touch-pan-y">
+              {items.map((item, index) => {
+                const link = safeNewsUrl(item.linkUrl);
+                return (
+                  <article
+                    key={item.id}
+                    role="group"
+                    aria-roledescription="diapositiva"
+                    aria-label={`${index + 1} de ${items.length}: ${item.title}`}
+                    aria-hidden={index !== currentIndex}
+                    className="min-w-0 flex-[0_0_100%]"
+                  >
+                    <button
+                      type="button"
+                      onClick={(event) => { selectedTrigger.current = event.currentTarget; setSelectedNews(item); }}
+                      tabIndex={index === currentIndex ? 0 : -1}
+                      aria-label={`Ampliar anuncio: ${item.title}`}
+                      className="group relative block h-[320px] w-full cursor-zoom-in bg-[#edf0e8] p-3 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#2d5a27] sm:h-[420px] md:h-[480px] md:p-5"
+                    >
+                      <AnnouncementImage item={item} />
+                      <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full border border-[#e5e0d8] bg-white/95 px-3 py-2 font-['Inter'] text-xs text-[#1a2e1a] shadow-sm"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" /> Ampliar</span>
+                    </button>
+                    <div className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
+                      <div className="min-w-0">
+                        <h3 className="break-words font-['Inter'] text-lg font-semibold leading-snug text-[#1a2e1a]">{item.title}</h3>
+                        {item.summary && <p className="mt-2 line-clamp-2 break-words font-['Inter'] text-sm leading-relaxed text-[#5a6b5a]">{item.summary}</p>}
+                      </div>
+                      {link && (
+                        <a href={link} tabIndex={index === currentIndex ? 0 : -1} target={link.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full bg-[#1a2e1a] px-5 py-3 font-['Inter'] text-sm font-medium text-white transition hover:bg-[#2d5a27] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]">
+                          {item.linkText || "Más información"}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                        </a>
+                      )}
                     </div>
-                  )}
-
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5">
-                      <span className="font-['Inter'] text-[11px] font-semibold text-[#1a2e1a] bg-[#f5f2ec] px-2.5 py-0.5 rounded-full">
-                        {item.category}
-                      </span>
-                      <span className="font-['Inter'] text-[11px] text-[#5a6b5a]">
-                        {formatDisplayDate(item.publishedAt)}
-                      </span>
-                    </div>
-
-                    <h4 className="font-['Inter'] font-semibold text-[#1a2e1a] text-sm sm:text-base leading-snug line-clamp-2 group-hover:text-[#2d5a27] transition">
-                      {item.title}
-                    </h4>
-
-                    <p className="font-['Inter'] text-xs text-[#1a2e1a]/60 line-clamp-2 mt-1">
-                      {item.summary}
-                    </p>
-                  </div>
-
-                  <div className="hidden sm:flex w-9 h-9 rounded-full bg-[#f5f2ec] group-hover:bg-[#8aaf7e] items-center justify-center transition shrink-0">
-                    <ArrowUpRight className="w-4 h-4 text-[#1a2e1a]" />
-                  </div>
-                </div>
-              ))
-            ) : (
-              <div className="bg-white rounded-3xl border border-[#e5e0d8] p-8 flex flex-col items-center justify-center text-center h-full">
-                <Sparkles className="w-10 h-10 text-[#8aaf7e] mb-3" />
-                <h4 className="font-['Playfair_Display'] text-xl text-[#1a2e1a] font-semibold">
-                  Más noticias próximamente
-                </h4>
-                <p className="font-['Inter'] text-xs text-[#5a6b5a] mt-2 max-w-xs leading-relaxed">
-                  Mantente informado sobre nuestros próximos talleres y jornadas legales en Morelia.
-                </p>
-              </div>
-            )}
+                  </article>
+                );
+              })}
+            </div>
           </div>
+          {items.length > 1 && (
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-1">
+              {items.map((item, index) => (
+                <button type="button" key={item.id} onClick={() => api?.scrollTo(index)} aria-label={`Ir al anuncio ${index + 1}: ${item.title}`} aria-current={index === currentIndex ? "true" : undefined} className="flex h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#2d5a27]">
+                  <span className={`h-2 rounded-full transition-all motion-reduce:transition-none ${index === currentIndex ? "w-6 bg-[#2d5a27]" : "w-2 bg-[#b9c3b4]"}`} />
+                </button>
+              ))}
+              <p aria-live="polite" aria-atomic="true" className="ml-3 font-['Inter'] text-xs text-[#5a6b5a]">{currentIndex + 1} / {items.length}</p>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Reader Modal */}
-      <AnimatePresence>
-        {selectedNews && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[90] flex items-center justify-center p-4 bg-black/55 backdrop-blur-sm"
-            onClick={() => setSelectedNews(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0, y: 15 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.95, opacity: 0, y: 15 }}
-              className="bg-white rounded-3xl max-w-2xl w-full max-h-[88vh] overflow-y-auto shadow-2xl p-6 sm:p-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header */}
-              <div className="flex items-center justify-between pb-4 border-b border-[#e5e0d8]">
-                <div className="flex items-center gap-2">
-                  <span className="font-['Inter'] text-xs font-semibold px-3 py-1 rounded-full bg-[#1a2e1a] text-white">
-                    {selectedNews.category}
-                  </span>
-                  <span className="font-['Inter'] text-xs text-[#5a6b5a] flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {formatDisplayDate(selectedNews.publishedAt)}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => setSelectedNews(null)}
-                  className="w-8 h-8 rounded-full bg-[#f5f2ec] hover:bg-[#e5e0d8] flex items-center justify-center text-[#1a2e1a] transition"
-                  aria-label="Cerrar modal"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-
-              {/* Image */}
-              {selectedNews.imageUrl && (
-                <div className="mt-5 rounded-2xl overflow-hidden aspect-[16/9] w-full bg-[#f5f2ec]">
-                  <img
-                    src={selectedNews.imageUrl}
-                    alt={selectedNews.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              {/* Title */}
-              <h2 className="font-['Playfair_Display'] text-2xl sm:text-3xl text-[#1a2e1a] font-bold mt-5 leading-tight">
-                {selectedNews.title}
-              </h2>
-
-              {/* Summary Lead */}
-              <p className="font-['Inter'] text-sm sm:text-base text-[#1a2e1a]/80 font-medium mt-3 leading-relaxed bg-[#f5f2ec]/60 p-4 rounded-xl border border-[#e5e0d8]">
-                {selectedNews.summary}
-              </p>
-
-              {/* Content paragraphs */}
-              {selectedNews.content && (
-                <div className="font-['Inter'] text-sm text-[#3a4a3a] mt-5 leading-relaxed whitespace-pre-line space-y-3">
-                  {selectedNews.content}
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="mt-8 pt-5 border-t border-[#e5e0d8] flex flex-col sm:flex-row items-center justify-between gap-4">
-                <span className="text-xs text-[#5a6b5a] font-['Inter']">
-                  Plenitud Emocional · Morelia, Michoacán
-                </span>
-
-                <div className="flex items-center gap-3 w-full sm:w-auto">
-                  <button
-                    type="button"
-                    onClick={() => setSelectedNews(null)}
-                    className="flex-1 sm:flex-none px-5 py-2.5 rounded-full border border-[#e5e0d8] text-[#5a6b5a] text-xs font-['Inter'] hover:bg-[#f5f2ec] transition"
-                  >
-                    Cerrar
-                  </button>
-
-                  {selectedNews.linkUrl && (
-                    <a
-                      href={selectedNews.linkUrl}
-                      target={selectedNews.linkUrl.startsWith("http") ? "_blank" : undefined}
-                      rel="noreferrer"
-                      className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 rounded-full bg-[#1a2e1a] px-6 py-2.5 text-xs font-medium text-white font-['Inter'] hover:bg-[#2d5a27] transition shadow-xs"
-                    >
-                      {selectedNews.linkText || "Más información"}
-                      <ArrowUpRight className="w-3.5 h-3.5" />
-                    </a>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <Dialog.Root open={Boolean(selectedNews)} onOpenChange={(open) => { if (!open) setSelectedNews(null); }}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-[90] bg-black/60 backdrop-blur-sm" />
+          <Dialog.Content onCloseAutoFocus={(event) => { event.preventDefault(); selectedTrigger.current?.focus(); }} className="fixed left-1/2 top-1/2 z-[91] max-h-[90dvh] w-[calc(100%-2rem)] max-w-3xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-white p-5 shadow-2xl sm:p-8">
+            <Dialog.Title className="break-words pr-12 font-['Inter'] text-xl font-semibold text-[#1a2e1a]">{selectedNews?.title}</Dialog.Title>
+            <Dialog.Description className="sr-only">Imagen y detalles del anuncio.</Dialog.Description>
+            <Dialog.Close aria-label="Cerrar anuncio" className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-[#f5f2ec] text-[#1a2e1a] hover:bg-[#e5e0d8]"><X className="h-5 w-5" /></Dialog.Close>
+            {selectedNews && <div className="mt-5 rounded-xl bg-[#edf0e8] p-2"><AnnouncementImage item={selectedNews} expanded /></div>}
+            {selectedNews?.summary && <p className="mt-5 break-words font-['Inter'] text-sm leading-relaxed text-[#1a2e1a]">{selectedNews.summary}</p>}
+            {selectedNews?.content && <p className="mt-4 whitespace-pre-line break-words font-['Inter'] text-sm leading-relaxed text-[#5a6b5a]">{selectedNews.content}</p>}
+            {selectedLink && <a href={selectedLink} target={selectedLink.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 rounded-full bg-[#1a2e1a] px-5 py-3 font-['Inter'] text-sm font-medium text-white hover:bg-[#2d5a27]">{selectedNews?.linkText || "Más información"}<ArrowUpRight className="h-4 w-4" aria-hidden="true" /></a>}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </section>
   );
 }

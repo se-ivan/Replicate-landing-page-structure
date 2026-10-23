@@ -1,225 +1,134 @@
-import { defaultNews, type NewsItem, type NewsInput } from "../data/news";
+import type { News } from "@prisma/client";
+import { defaultNews, safeNewsUrl, type NewsItem, type NewsInput } from "../data/news";
 import { prisma } from "./prisma";
 
-// In-memory fallback cache for development or when database is not connected
+// Sample data is available only for local development without a database.
+// Production writes must reach the database before reporting success.
+const memoryMode = import.meta.env.DEV && !import.meta.env.DATABASE_URL;
 let memoryNews: NewsItem[] = [...defaultNews];
 
-function slugify(value: string): string {
-  return value
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/[^a-z0-9\s-]/g, "")
-    .trim()
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-");
-}
-
-function serializeNews(record: {
-  id: string;
-  title: string;
-  summary: string;
-  content: string;
-  category: string;
-  imageUrl: string | null;
-  linkUrl: string | null;
-  linkText: string | null;
-  featured: boolean;
-  published: boolean;
-  publishedAt: Date;
-  creadoEn: Date;
-  actualizadoEn: Date;
-}): NewsItem {
+function serializeNews(record: News): NewsItem {
   return {
-    id: record.id,
-    title: record.title,
-    summary: record.summary,
-    content: record.content,
-    category: record.category,
-    imageUrl: record.imageUrl,
-    linkUrl: record.linkUrl,
-    linkText: record.linkText,
-    featured: record.featured,
-    published: record.published,
+    ...record,
     publishedAt: record.publishedAt.toISOString(),
     creadoEn: record.creadoEn.toISOString(),
     actualizadoEn: record.actualizadoEn.toISOString(),
   };
 }
 
-export function validateNews(data: NewsInput): string | null {
-  if (!data.title?.trim()) return "El título es obligatorio.";
-  if (!data.summary?.trim()) return "El resumen es obligatorio.";
+export function validateNews(data: unknown): string | null {
+  if (!data || typeof data !== "object" || Array.isArray(data)) return "Los datos del anuncio no son válidos.";
+  const input = data as Record<string, unknown>;
+  if (typeof input.title !== "string" || !input.title.trim()) return "El título es obligatorio.";
+  if (input.title.trim().length > 200) return "El título no debe superar 200 caracteres.";
+  for (const field of ["id", "summary", "content", "category", "publishedAt"]) {
+    if (input[field] !== undefined && typeof input[field] !== "string") return "Los datos del anuncio no son válidos.";
+  }
+  for (const field of ["imageUrl", "linkUrl", "linkText"]) {
+    if (input[field] !== undefined && input[field] !== null && typeof input[field] !== "string") return "Los enlaces del anuncio no son válidos.";
+  }
+  for (const field of ["featured", "published"]) {
+    if (input[field] !== undefined && typeof input[field] !== "boolean") return "La visibilidad del anuncio no es válida.";
+  }
+  if (!(input.imageUrl as string | undefined)?.trim() && !(input.summary as string | undefined)?.trim()) {
+    return "Sube una imagen o escribe una descripción para el anuncio.";
+  }
+  for (const field of ["imageUrl", "linkUrl"]) {
+    const value = input[field] as string | null | undefined;
+    if (value?.trim() && !safeNewsUrl(value)) return "Usa enlaces http(s) o rutas del sitio para la imagen y el anuncio.";
+  }
+  if (input.publishedAt !== undefined && (!input.publishedAt || Number.isNaN(new Date(input.publishedAt as string).getTime()))) {
+    return "La fecha del anuncio no es válida.";
+  }
   return null;
 }
 
 export async function getNews(includeUnpublished = true): Promise<NewsItem[]> {
-  try {
-    // Attempt to query from Prisma
-    const query = includeUnpublished ? {} : { where: { published: true } };
-    // @ts-expect-error news might be generated dynamically by prisma client
-    if (prisma.news) {
-      // @ts-expect-error dynamic access
-      const dbNews = await prisma.news.findMany({
-        ...query,
-        orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
-      });
-      if (Array.isArray(dbNews)) {
-        return dbNews.map(serializeNews);
-      }
-    }
-  } catch (err) {
-    console.warn("Prisma news query fallback to in-memory/default news:", err);
+  if (memoryMode) {
+    return memoryNews.filter((item) => includeUnpublished || item.published).sort((a, b) => {
+      if (a.featured !== b.featured) return a.featured ? -1 : 1;
+      return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+    });
   }
-
-  // Fallback to in-memory news
-  const items = includeUnpublished ? memoryNews : memoryNews.filter((n) => n.published);
-  return [...items].sort((a, b) => {
-    if (a.featured && !b.featured) return -1;
-    if (!a.featured && b.featured) return 1;
-    return new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime();
+  const records = await prisma.news.findMany({
+    where: includeUnpublished ? undefined : { published: true },
+    orderBy: [{ featured: "desc" }, { publishedAt: "desc" }],
   });
+  return records.map(serializeNews);
 }
 
 export async function getPublishedNews(): Promise<NewsItem[]> {
-  return getNews(false);
+  try {
+    return await getNews(false);
+  } catch (error) {
+    console.error("No se pudieron cargar los anuncios publicados", error);
+    return [];
+  }
 }
 
 export async function getNewsById(id: string): Promise<NewsItem | null> {
-  try {
-    // @ts-expect-error dynamic access
-    if (prisma.news) {
-      // @ts-expect-error dynamic access
-      const dbNews = await prisma.news.findUnique({ where: { id } });
-      if (dbNews) return serializeNews(dbNews);
-    }
-  } catch (err) {
-    console.warn("Prisma getNewsById fallback:", err);
-  }
-
-  return memoryNews.find((n) => n.id === id) ?? null;
+  if (memoryMode) return memoryNews.find((item) => item.id === id) ?? null;
+  const record = await prisma.news.findUnique({ where: { id } });
+  return record ? serializeNews(record) : null;
 }
 
 export async function upsertNews(data: NewsInput): Promise<NewsItem> {
-  const title = data.title.trim();
-  const id = (data.id?.trim() || slugify(title) || crypto.randomUUID()).toLowerCase();
-  const summary = data.summary.trim();
-  const content = data.content?.trim() || "";
-  const category = data.category?.trim() || "General";
-  const imageUrl = data.imageUrl?.trim() || null;
-  const linkUrl = data.linkUrl?.trim() || null;
-  const linkText = data.linkText?.trim() || "Más información";
-  const featured = Boolean(data.featured);
-  const published = data.published !== false;
-  const publishedAt = data.publishedAt ? new Date(data.publishedAt) : new Date();
-
-  try {
-    // @ts-expect-error dynamic access
-    if (prisma.news) {
-      // @ts-expect-error dynamic access
-      const record = await prisma.news.upsert({
-        where: { id },
-        create: {
-          id,
-          title,
-          summary,
-          content,
-          category,
-          imageUrl,
-          linkUrl,
-          linkText,
-          featured,
-          published,
-          publishedAt,
-        },
-        update: {
-          title,
-          summary,
-          content,
-          category,
-          imageUrl,
-          linkUrl,
-          linkText,
-          featured,
-          published,
-          publishedAt,
-        },
-      });
-      return serializeNews(record);
-    }
-  } catch (err) {
-    console.warn("Prisma upsertNews fallback to memory:", err);
-  }
-
-  // In-memory fallback
-  const now = new Date().toISOString();
-  const existingIndex = memoryNews.findIndex((n) => n.id === id);
-  const item: NewsItem = {
-    id,
-    title,
-    summary,
-    content,
-    category,
-    imageUrl,
-    linkUrl,
-    linkText,
-    featured,
-    published,
-    publishedAt: publishedAt.toISOString(),
-    creadoEn: existingIndex >= 0 ? memoryNews[existingIndex].creadoEn : now,
-    actualizadoEn: now,
+  const error = validateNews(data);
+  if (error) throw new Error(error);
+  const id = data.id?.trim() || crypto.randomUUID();
+  const values = {
+    title: data.title.trim(),
+    summary: data.summary?.trim() || "",
+    content: data.content?.trim() || "",
+    category: data.category?.trim() || "General",
+    imageUrl: safeNewsUrl(data.imageUrl),
+    linkUrl: safeNewsUrl(data.linkUrl),
+    linkText: data.linkText?.trim() || "Más información",
+    featured: Boolean(data.featured),
+    published: data.published !== false,
+    publishedAt: data.publishedAt ? new Date(data.publishedAt) : new Date(),
   };
 
-  if (existingIndex >= 0) {
-    memoryNews[existingIndex] = item;
-  } else {
-    memoryNews = [item, ...memoryNews];
+  if (!memoryMode) {
+    const record = await prisma.news.upsert({
+      where: { id },
+      create: { id, ...values },
+      update: values,
+    });
+    return serializeNews(record);
   }
 
+  const now = new Date().toISOString();
+  const existing = memoryNews.find((item) => item.id === id);
+  const item: NewsItem = {
+    id,
+    ...values,
+    publishedAt: values.publishedAt.toISOString(),
+    creadoEn: existing?.creadoEn || now,
+    actualizadoEn: now,
+  };
+  memoryNews = [item, ...memoryNews.filter((current) => current.id !== id)];
   return item;
 }
 
 export async function deleteNews(id: string): Promise<boolean> {
-  try {
-    // @ts-expect-error dynamic access
-    if (prisma.news) {
-      // @ts-expect-error dynamic access
-      const deleted = await prisma.news.deleteMany({ where: { id } });
-      if (deleted.count > 0) return true;
-    }
-  } catch (err) {
-    console.warn("Prisma deleteNews fallback to memory:", err);
+  if (!memoryMode) {
+    const deleted = await prisma.news.deleteMany({ where: { id } });
+    return deleted.count > 0;
   }
-
-  const prevLen = memoryNews.length;
-  memoryNews = memoryNews.filter((n) => n.id !== id);
-  return memoryNews.length < prevLen;
+  const previousLength = memoryNews.length;
+  memoryNews = memoryNews.filter((item) => item.id !== id);
+  return memoryNews.length < previousLength;
 }
 
 export async function toggleNewsPublished(id: string, published: boolean): Promise<NewsItem | null> {
-  try {
-    // @ts-expect-error dynamic access
-    if (prisma.news) {
-      // @ts-expect-error dynamic access
-      const updated = await prisma.news.update({
-        where: { id },
-        data: { published },
-      });
-      return serializeNews(updated);
-    }
-  } catch (err) {
-    console.warn("Prisma toggleNewsPublished fallback to memory:", err);
+  if (!memoryMode) {
+    const updated = await prisma.news.updateMany({ where: { id }, data: { published } });
+    return updated.count > 0 ? getNewsById(id) : null;
   }
-
-  const index = memoryNews.findIndex((n) => n.id === id);
-  if (index >= 0) {
-    memoryNews[index] = {
-      ...memoryNews[index],
-      published,
-      actualizadoEn: new Date().toISOString(),
-    };
-    return memoryNews[index];
-  }
-
-  return null;
+  const item = memoryNews.find((current) => current.id === id);
+  if (!item) return null;
+  item.published = published;
+  item.actualizadoEn = new Date().toISOString();
+  return { ...item };
 }

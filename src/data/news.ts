@@ -17,7 +17,7 @@ export interface NewsItem {
 export type NewsInput = {
   id?: string;
   title: string;
-  summary: string;
+  summary?: string;
   content?: string;
   category?: string;
   imageUrl?: string | null;
@@ -27,6 +27,19 @@ export type NewsInput = {
   published?: boolean;
   publishedAt?: string;
 };
+
+// Only allow site-relative paths and web URLs in announcement images and links.
+export function safeNewsUrl(value?: string | null): string | null {
+  const url = value?.trim();
+  if (!url) return null;
+  if (/^\/(?!\/)/.test(url) && !/[\\\s]/.test(url)) return url;
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === "https:" || parsed.protocol === "http:" ? parsed.href : null;
+  } catch {
+    return null;
+  }
+}
 
 export const defaultNews: NewsItem[] = [
   {

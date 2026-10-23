@@ -3,10 +3,15 @@ import App from "../app/App";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getArticlesForExactAudience } from "../lib/articles";
 import { getPublishedNews } from "../lib/news";
+import { articles as defaultArticles } from "../data/articles";
 
 export const prerender = false;
 
-const articles = (await getArticlesForExactAudience("ambos")).slice(0, 4);
+// Keep the home preview available locally before database credentials are configured.
+const homeArticles = import.meta.env.DEV && !import.meta.env.DATABASE_URL
+  ? defaultArticles.filter((article) => article.audience === "ambos")
+  : await getArticlesForExactAudience("ambos");
+const articles = homeArticles.slice(0, 4);
 const news = await getPublishedNews();
 ---
 

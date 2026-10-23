@@ -1,635 +1,288 @@
-import { useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
-import type { NewsItem, NewsInput } from "../../../data/news";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { Eye, EyeOff, ImageIcon, Pencil, Plus, Trash2, X } from "lucide-react";
+import { safeNewsUrl, type NewsItem, type NewsInput } from "../../../data/news";
+import { NewsSection } from "../NewsSection";
+import { NewsImageUploader } from "./NewsImageUploader";
 
-const CATEGORIES = [
-  "General",
-  "Aviso",
-  "Taller",
-  "Legal",
-  "Salud Emocional",
-  "Comunidad",
-  "Evento",
-];
+const CATEGORIES = ["General", "Aviso", "Taller", "Legal", "Salud Emocional", "Comunidad", "Evento"];
 
-const PRESET_IMAGES = [
-  {
-    label: "Taller / Grupo",
-    url: "https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
-  },
-  {
-    label: "Legal / Asesoría",
-    url: "https://images.unsplash.com/photo-1768839722927-df0ef3188f6d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
-  },
-  {
-    label: "Psicología / Emocional",
-    url: "https://images.unsplash.com/photo-1714976694664-4293ac04138e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
-  },
-  {
-    label: "Bienestar / Adultos",
-    url: "https://images.unsplash.com/photo-1632685236331-42a5a6913025?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=1200&q=80",
-  },
-];
-
-const EMPTY_FORM: NewsInput = {
-  id: "",
+const emptyForm = (): NewsInput => ({
   title: "",
   summary: "",
   content: "",
   category: "General",
-  imageUrl: PRESET_IMAGES[0].url,
+  imageUrl: "",
   linkUrl: "",
   linkText: "Más información",
   featured: false,
   published: true,
   publishedAt: new Date().toISOString().slice(0, 10),
-};
+});
+
+const inputClass = "mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20";
+const secondaryButton = "inline-flex items-center justify-center gap-2 rounded-xl border border-[#e5e0d8] px-4 py-2.5 text-sm text-[#5a6b5a] transition hover:bg-[#edf1e8] disabled:opacity-50";
 
 export function NewsManager() {
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
-  const [form, setForm] = useState<NewsInput>(EMPTY_FORM);
+  const [form, setForm] = useState<NewsInput>(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [busyId, setBusyId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [search, setSearch] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState<string>("todas");
-  const [previewItem, setPreviewItem] = useState<NewsItem | null>(null);
-
-  const fetchNews = async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/news?all=true");
-      if (res.ok) {
-        const data = await res.json();
-        setNewsList(data);
-      } else {
-        setError("No se pudieron cargar las noticias.");
-      }
-    } catch {
-      setError("Error de conexión al cargar noticias.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const previewTrigger = useRef<HTMLButtonElement>(null);
+  const busy = saving || uploading || Boolean(busyId);
 
   useEffect(() => {
-    fetchNews();
+    const controller = new AbortController();
+    const load = async () => {
+      try {
+        const response = await fetch("/api/news?all=true", { signal: controller.signal });
+        if (!response.ok) throw new Error("No se pudieron cargar los anuncios. Recarga la página para intentarlo de nuevo.");
+        setNewsList(await response.json());
+      } catch (error) {
+        if (!controller.signal.aborted) setError(error instanceof Error ? error.message : "No se pudieron cargar los anuncios.");
+      } finally {
+        if (!controller.signal.aborted) setLoading(false);
+      }
+    };
+    void load();
+    return () => controller.abort();
   }, []);
 
   const filteredNews = useMemo(() => {
-    return newsList.filter((item) => {
-      if (selectedCategory !== "todas" && item.category !== selectedCategory) {
-        return false;
-      }
-      if (!search.trim()) return true;
-      const q = search.toLowerCase();
-      return (
-        item.title.toLowerCase().includes(q) ||
-        item.summary.toLowerCase().includes(q) ||
-        item.category.toLowerCase().includes(q)
-      );
-    });
-  }, [newsList, search, selectedCategory]);
+    const query = search.trim().toLocaleLowerCase("es");
+    return newsList.filter((item) => `${item.title} ${item.summary} ${item.category}`.toLocaleLowerCase("es").includes(query));
+  }, [newsList, search]);
 
   const resetForm = () => {
-    setForm({
-      ...EMPTY_FORM,
-      publishedAt: new Date().toISOString().slice(0, 10),
-    });
+    setForm(emptyForm());
     setEditingId(null);
     setMessage("");
     setError("");
   };
 
   const editNews = (item: NewsItem) => {
-    setForm({
-      id: item.id,
-      title: item.title,
-      summary: item.summary,
-      content: item.content || "",
-      category: item.category || "General",
-      imageUrl: item.imageUrl || "",
-      linkUrl: item.linkUrl || "",
-      linkText: item.linkText || "Más información",
-      featured: item.featured,
-      published: item.published,
-      publishedAt: item.publishedAt ? item.publishedAt.slice(0, 10) : new Date().toISOString().slice(0, 10),
-    });
+    setForm({ ...item, publishedAt: item.publishedAt.slice(0, 10) });
     setEditingId(item.id);
     setMessage("");
     setError("");
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
-  const handleSave = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSaving(true);
-    setMessage("");
+  const handleSave = async (event: FormEvent) => {
+    event.preventDefault();
+    if (busy) return;
     setError("");
+    setMessage("");
+    if (!form.title.trim()) { setError("El título es obligatorio."); return; }
+    if (!form.imageUrl?.trim() && !form.summary?.trim()) { setError("Sube una imagen o escribe una descripción para el anuncio."); return; }
+    if (form.imageUrl?.trim() && !safeNewsUrl(form.imageUrl)) { setError("La imagen debe tener un enlace válido del sitio o una URL http(s)."); return; }
+    if (form.linkUrl?.trim() && !safeNewsUrl(form.linkUrl)) { setError("El enlace debe ser una ruta del sitio o una URL http(s)."); return; }
 
-    if (!form.title.trim()) {
-      setError("El título es obligatorio.");
-      setSaving(false);
-      return;
-    }
-    if (!form.summary.trim()) {
-      setError("El resumen es obligatorio.");
-      setSaving(false);
-      return;
-    }
-
-    const payload = {
-      ...form,
-      id: editingId || undefined,
-    };
-
-    const url = editingId ? `/api/news/${editingId}` : "/api/news";
-    const method = editingId ? "PATCH" : "POST";
-
+    setSaving(true);
     try {
-      const res = await fetch(url, {
-        method,
+      const response = await fetch(editingId ? `/api/news/${encodeURIComponent(editingId)}` : "/api/news", {
+        method: editingId ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({ ...form, id: editingId || undefined }),
       });
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "No se pudo guardar la noticia.");
-        return;
-      }
-
-      setMessage(editingId ? "Noticia actualizada correctamente." : "Noticia publicada con éxito.");
-      await fetchNews();
-      if (!editingId) resetForm();
-    } catch {
-      setError("Error de red al guardar la noticia.");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "No se pudo guardar el anuncio.");
+      setNewsList((items) => [result.news, ...items.filter((item) => item.id !== result.news.id)]);
+      if (!editingId) setForm(emptyForm());
+      setMessage(form.published ? "Anuncio guardado. Ya está visible en el carrusel del inicio." : "Anuncio guardado como oculto.");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "Error de conexión al guardar el anuncio.");
     } finally {
       setSaving(false);
     }
   };
 
   const togglePublished = async (item: NewsItem) => {
+    if (busy) return;
+    setBusyId(item.id);
+    setError("");
+    setMessage("");
     try {
-      const res = await fetch(`/api/news/${item.id}`, {
+      const response = await fetch(`/api/news/${encodeURIComponent(item.id)}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ published: !item.published }),
       });
-      if (res.ok) {
-        await fetchNews();
-      }
-    } catch {
-      setError("No se pudo actualizar el estado de la noticia.");
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "No se pudo cambiar la visibilidad.");
+      setNewsList((items) => items.map((current) => current.id === item.id ? result.news : current));
+      if (editingId === item.id) setForm((current) => ({ ...current, published: result.news.published }));
+      setMessage(result.news.published ? "Anuncio visible en el carrusel." : "Anuncio oculto del carrusel.");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "No se pudo cambiar la visibilidad.");
+    } finally {
+      setBusyId(null);
     }
   };
 
   const deleteNewsItem = async (item: NewsItem) => {
-    if (!confirm(`¿Eliminar la noticia "${item.title}"?`)) return;
-
+    if (busy || !confirm(`¿Eliminar el anuncio “${item.title}”?`)) return;
+    setBusyId(item.id);
+    setError("");
+    setMessage("");
     try {
-      const res = await fetch(`/api/news/${item.id}`, { method: "DELETE" });
-      if (res.ok) {
-        if (editingId === item.id) resetForm();
-        await fetchNews();
-        setMessage("Noticia eliminada.");
-      } else {
-        setError("No se pudo eliminar la noticia.");
-      }
-    } catch {
-      setError("Error al comunicarse con el servidor.");
+      const response = await fetch(`/api/news/${encodeURIComponent(item.id)}`, { method: "DELETE" });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || "No se pudo eliminar el anuncio.");
+      setNewsList((items) => items.filter((current) => current.id !== item.id));
+      if (editingId === item.id) resetForm();
+      setMessage("Anuncio eliminado.");
+    } catch (error) {
+      setError(error instanceof Error ? error.message : "No se pudo eliminar el anuncio.");
+    } finally {
+      setBusyId(null);
     }
   };
 
+  const previewItem: NewsItem = {
+    ...form,
+    id: editingId || "preview",
+    title: form.title || "Título del anuncio",
+    summary: form.summary || "",
+    content: form.content || "",
+    category: form.category || "General",
+    featured: Boolean(form.featured),
+    published: true,
+    publishedAt: form.publishedAt || new Date().toISOString(),
+    creadoEn: new Date().toISOString(),
+    actualizadoEn: new Date().toISOString(),
+  };
+
   return (
-    <>
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_380px]">
-        {/* Form Column */}
-        <form onSubmit={handleSave} className="bg-white rounded-2xl border border-[#e5e0d8] p-5 sm:p-6 shadow-sm">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
+    <div className="grid gap-6 font-['Inter'] lg:grid-cols-[minmax(0,1fr)_380px]">
+      <form onSubmit={handleSave} className="min-w-0 rounded-2xl border border-[#e5e0d8] bg-white p-5 shadow-sm sm:p-6">
+        <fieldset disabled={busy} className="min-w-0">
+          <div className="mb-6 flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className="text-xl font-semibold text-[#1a2e1a] font-['Inter']">
-                {editingId ? "Editar Noticia" : "Publicar Nueva Noticia"}
-              </h2>
-              <p className="text-sm text-[#5a6b5a] font-['Inter'] mt-1">
-                Las noticias activas se mostrarán en la página principal bajo el Hero.
-              </p>
+              <h2 className="text-xl font-semibold text-[#1a2e1a]">{editingId ? "Editar anuncio" : "Nuevo anuncio"}</h2>
+              <p className="mt-1 max-w-md text-sm leading-relaxed text-[#5a6b5a]">Sube una imagen o cartel. Los anuncios publicados aparecen en el carrusel debajo de la portada.</p>
             </div>
-            <button
-              type="button"
-              onClick={resetForm}
-              className="px-4 py-2 rounded-xl border border-[#e5e0d8] text-[#5a6b5a] text-sm font-['Inter'] hover:border-[#2d5a27]/30 transition-colors"
-            >
-              Limpiar
-            </button>
+            <button type="button" onClick={resetForm} className={secondaryButton}><Plus className="h-4 w-4" aria-hidden="true" />{editingId ? "Nuevo anuncio" : "Limpiar"}</button>
           </div>
 
-          <div className="grid gap-4 sm:grid-cols-3">
-            <label className="block sm:col-span-2">
-              <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Título *</span>
-              <input
-                value={form.title}
-                onChange={(e) => setForm((curr) => ({ ...curr, title: e.target.value }))}
-                required
-                placeholder="Ej. Nuevo Taller de Bienestar Emocional..."
-                className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Categoría</span>
-              <select
-                value={form.category}
-                onChange={(e) => setForm((curr) => ({ ...curr, category: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              >
-                {CATEGORIES.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <label className="block mt-4">
-            <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">
-              Resumen Breve (Visible en la tarjeta de inicio) *
-            </span>
-            <textarea
-              value={form.summary}
-              onChange={(e) => setForm((curr) => ({ ...curr, summary: e.target.value }))}
-              required
-              rows={2}
-              placeholder="Breve introducción o extracto para captar el interés..."
-              className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-            />
+          <label className="mb-4 block text-sm font-medium text-[#3a4a3a]">
+            Título del anuncio *
+            <input value={form.title} onChange={(event) => setForm((current) => ({ ...current, title: event.target.value }))} required maxLength={200} placeholder="Ej. Taller de bienestar emocional" className={inputClass} />
           </label>
 
-          <label className="block mt-4">
-            <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">
-              Contenido Completo (Visible al pulsar 'Leer noticia')
-            </span>
-            <textarea
-              value={form.content}
-              onChange={(e) => setForm((curr) => ({ ...curr, content: e.target.value }))}
-              rows={5}
-              placeholder="Desarrollo completo de la noticia, fechas, detalles, instrucciones, etc..."
-              className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-            />
-          </label>
-
-          {/* Image selection */}
-          <div className="mt-4 p-4 rounded-xl border border-[#e5e0d8] bg-[#fafaf8]">
-            <span className="text-sm font-medium text-[#3a4a3a] font-['Inter'] block mb-2">
-              Imagen de la Noticia (URL)
-            </span>
-            <div className="flex flex-col sm:flex-row gap-3 items-start">
-              <input
-                value={form.imageUrl || ""}
-                onChange={(e) => setForm((curr) => ({ ...curr, imageUrl: e.target.value }))}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full flex-1 rounded-xl border border-[#e5e0d8] bg-white px-4 py-2.5 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              />
-              {form.imageUrl && (
-                <div className="h-16 w-24 rounded-lg overflow-hidden border border-[#e5e0d8] shrink-0 bg-white">
-                  <img
-                    src={form.imageUrl}
-                    alt="Preview"
-                    className="h-full w-full object-cover"
-                    onError={(e) => {
-                      (e.target as HTMLElement).style.display = "none";
-                    }}
-                  />
-                </div>
-              )}
-            </div>
-
-            <div className="mt-3">
-              <span className="text-xs text-[#5a6b5a] font-['Inter'] block mb-1.5">
-                Imágenes sugeridas de apoyo:
-              </span>
-              <div className="flex flex-wrap gap-2">
-                {PRESET_IMAGES.map((preset) => (
-                  <button
-                    key={preset.label}
-                    type="button"
-                    onClick={() => setForm((curr) => ({ ...curr, imageUrl: preset.url }))}
-                    className="text-xs font-['Inter'] px-2.5 py-1 rounded-lg border border-[#e5e0d8] bg-white text-[#5a6b5a] hover:bg-[#edf1e8] hover:text-[#1a2e1a] transition"
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-2 mt-4">
-            <label className="block">
-              <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Enlace de acción (opcional)</span>
-              <input
-                value={form.linkUrl || ""}
-                onChange={(e) => setForm((curr) => ({ ...curr, linkUrl: e.target.value }))}
-                placeholder="/agendar o https://wa.me/..."
-                className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              />
-            </label>
-
-            <label className="block">
-              <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Texto del botón de enlace</span>
-              <input
-                value={form.linkText || ""}
-                onChange={(e) => setForm((curr) => ({ ...curr, linkText: e.target.value }))}
-                placeholder="Ej. Inscribirme al taller"
-                className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-3 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              />
-            </label>
-          </div>
-
-          <div className="grid gap-4 sm:grid-cols-3 mt-4 items-center">
-            <label className="block">
-              <span className="text-sm font-medium text-[#3a4a3a] font-['Inter']">Fecha de Publicación</span>
-              <input
-                type="date"
-                value={form.publishedAt ? form.publishedAt.slice(0, 10) : ""}
-                onChange={(e) => setForm((curr) => ({ ...curr, publishedAt: e.target.value }))}
-                className="mt-1.5 w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-2.5 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20"
-              />
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer mt-5 sm:mt-6">
-              <input
-                type="checkbox"
-                checked={form.published}
-                onChange={(e) => setForm((curr) => ({ ...curr, published: e.target.checked }))}
-                className="h-4 w-4 rounded text-[#2d5a27] focus:ring-[#2d5a27]"
-              />
-              <span className="text-sm text-[#1a2e1a] font-medium font-['Inter']">
-                Publicada (visible en el sitio)
-              </span>
-            </label>
-
-            <label className="flex items-center gap-2 cursor-pointer mt-2 sm:mt-6">
-              <input
-                type="checkbox"
-                checked={form.featured}
-                onChange={(e) => setForm((curr) => ({ ...curr, featured: e.target.checked }))}
-                className="h-4 w-4 rounded text-[#2d5a27] focus:ring-[#2d5a27]"
-              />
-              <span className="text-sm text-[#1a2e1a] font-medium font-['Inter']">
-                Destacada (tarjeta principal)
-              </span>
-            </label>
-          </div>
-
-          <AnimatePresence>
-            {(message || error) && (
-              <motion.div
-                initial={{ opacity: 0, y: -6 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -6 }}
-                className={`mt-5 rounded-xl border px-4 py-3 text-sm font-['Inter'] ${
-                  error ? "bg-red-50 border-red-200 text-red-700" : "bg-emerald-50 border-emerald-200 text-emerald-700"
-                }`}
-              >
-                {error || message}
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          <div className="mt-6 flex flex-wrap gap-3">
-            <button
-              type="submit"
-              disabled={saving}
-              className="px-5 py-3 rounded-xl bg-[#1a2e1a] text-white text-sm font-semibold font-['Inter'] hover:bg-[#2d5a27] disabled:opacity-60 transition-colors shadow-sm"
-            >
-              {saving ? "Guardando..." : editingId ? "Actualizar Noticia" : "Publicar Noticia"}
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                setPreviewItem({
-                  id: form.id || "preview",
-                  title: form.title || "Título de ejemplo",
-                  summary: form.summary || "Resumen de ejemplo...",
-                  content: form.content || "Contenido completo de la noticia...",
-                  category: form.category || "General",
-                  imageUrl: form.imageUrl,
-                  linkUrl: form.linkUrl,
-                  linkText: form.linkText,
-                  featured: Boolean(form.featured),
-                  published: Boolean(form.published),
-                  publishedAt: form.publishedAt || new Date().toISOString(),
-                  creadoEn: new Date().toISOString(),
-                  actualizadoEn: new Date().toISOString(),
-                })
-              }
-              className="px-5 py-3 rounded-xl border border-[#e5e0d8] text-[#5a6b5a] text-sm font-['Inter'] hover:border-[#2d5a27]/30 transition"
-            >
-              Previsualizar Tarjeta
-            </button>
-          </div>
-        </form>
-
-        {/* List Column */}
-        <aside className="bg-white rounded-2xl border border-[#e5e0d8] p-5 shadow-sm h-fit lg:sticky lg:top-24">
-          <div className="flex items-center justify-between gap-3 mb-4">
-            <h2 className="text-lg font-semibold text-[#1a2e1a] font-['Inter']">Noticias Publicadas</h2>
-            <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-[#edf1e8] text-[#1a2e1a] font-['Inter']">
-              {newsList.length}
-            </span>
-          </div>
-
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Buscar por título o resumen..."
-            className="w-full rounded-xl border border-[#e5e0d8] bg-[#fafaf8] px-4 py-2.5 text-sm text-[#1a2e1a] font-['Inter'] focus:outline-none focus:ring-2 focus:ring-[#2d5a27]/20 mb-3"
+          <p className="mb-2 text-sm font-medium text-[#3a4a3a]">Imagen o cartel</p>
+          <NewsImageUploader
+            value={form.imageUrl || ""}
+            disabled={busy}
+            onUploadingChange={setUploading}
+            onUploaded={(url) => { setForm((current) => ({ ...current, imageUrl: url })); setError(""); setMessage(""); }}
+            onError={(text) => { setError(text); setMessage(""); }}
           />
+          <details className="mt-3 text-sm text-[#5a6b5a]">
+            <summary className="cursor-pointer py-1">Usar una imagen desde un enlace</summary>
+            <label className="mt-2 block">Enlace de la imagen
+              <input value={form.imageUrl || ""} onChange={(event) => setForm((current) => ({ ...current, imageUrl: event.target.value }))} placeholder="https://… o /images/…" className={inputClass} />
+            </label>
+          </details>
 
-          <div className="flex gap-1.5 overflow-x-auto pb-2 mb-2">
-            {["todas", ...CATEGORIES].map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`text-[11px] font-['Inter'] px-2.5 py-1 rounded-full whitespace-nowrap transition ${
-                  selectedCategory === cat
-                    ? "bg-[#1a2e1a] text-white"
-                    : "bg-[#fafaf8] border border-[#e5e0d8] text-[#5a6b5a] hover:bg-[#edf1e8]"
-                }`}
-              >
-                {cat.charAt(0).toUpperCase() + cat.slice(1)}
-              </button>
+          <label className="mt-5 block text-sm font-medium text-[#3a4a3a]">
+            Descripción (opcional)
+            <textarea value={form.summary || ""} onChange={(event) => setForm((current) => ({ ...current, summary: event.target.value }))} rows={2} placeholder="Puedes dejarla vacía si el cartel ya incluye la información." className={inputClass} />
+          </label>
+
+          <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <label className="block text-sm font-medium text-[#3a4a3a]">Enlace del anuncio (opcional)
+              <input value={form.linkUrl || ""} onChange={(event) => setForm((current) => ({ ...current, linkUrl: event.target.value }))} placeholder="/agendar o https://wa.me/…" className={inputClass} />
+            </label>
+            <label className="block text-sm font-medium text-[#3a4a3a]">Texto del botón
+              <input value={form.linkText || ""} onChange={(event) => setForm((current) => ({ ...current, linkText: event.target.value }))} placeholder="Más información" className={inputClass} />
+            </label>
+          </div>
+
+          <details className="mt-5 rounded-xl border border-[#e5e0d8] p-4 text-sm text-[#5a6b5a]">
+            <summary className="cursor-pointer font-medium text-[#3a4a3a]">Más opciones</summary>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <label>Categoría
+                <select value={form.category} onChange={(event) => setForm((current) => ({ ...current, category: event.target.value }))} className={inputClass}>
+                  {Array.from(new Set([...CATEGORIES, form.category || "General"])).map((category) => <option key={category}>{category}</option>)}
+                </select>
+              </label>
+              <label>Fecha del anuncio
+                <input type="date" required value={form.publishedAt?.slice(0, 10) || ""} onChange={(event) => setForm((current) => ({ ...current, publishedAt: event.target.value }))} className={inputClass} />
+              </label>
+            </div>
+            <p className="mt-2 text-xs">Los destacados aparecen primero; después, los más recientes.</p>
+            <label className="mt-4 block">Información adicional (al ampliar el anuncio)
+              <textarea rows={4} value={form.content || ""} onChange={(event) => setForm((current) => ({ ...current, content: event.target.value }))} className={inputClass} />
+            </label>
+          </details>
+
+          <div className="mt-5 flex flex-wrap gap-5 text-sm text-[#1a2e1a]">
+            <label className="flex cursor-pointer items-center gap-2"><input type="checkbox" checked={Boolean(form.published)} onChange={(event) => setForm((current) => ({ ...current, published: event.target.checked }))} className="h-4 w-4 accent-[#2d5a27]" />Publicado en el sitio</label>
+            <label className="flex cursor-pointer items-center gap-2"><input type="checkbox" checked={Boolean(form.featured)} onChange={(event) => setForm((current) => ({ ...current, featured: event.target.checked }))} className="h-4 w-4 accent-[#2d5a27]" />Mostrar primero</label>
+          </div>
+        </fieldset>
+
+        {(message || error) && <p role={error ? "alert" : "status"} className={`mt-5 rounded-xl border px-4 py-3 text-sm ${error ? "border-red-200 bg-red-50 text-red-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>{error || message}</p>}
+
+        <div className="mt-6 flex flex-wrap gap-3">
+          <button type="submit" disabled={busy} className="rounded-xl bg-[#1a2e1a] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#2d5a27] disabled:opacity-60">{uploading ? "Subiendo imagen…" : saving ? "Guardando…" : editingId ? "Guardar cambios" : form.published ? "Publicar anuncio" : "Guardar oculto"}</button>
+          <button ref={previewTrigger} type="button" disabled={busy} onClick={() => setPreviewOpen(true)} className={secondaryButton}><Eye className="h-4 w-4" aria-hidden="true" />Vista previa</button>
+        </div>
+      </form>
+
+      <aside className="h-fit min-w-0 rounded-2xl border border-[#e5e0d8] bg-white p-5 shadow-sm lg:sticky lg:top-24">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-[#1a2e1a]">Tus anuncios</h2>
+          <span className="rounded-full bg-[#edf1e8] px-2.5 py-1 text-xs font-medium text-[#1a2e1a]">{newsList.filter((item) => item.published).length} visibles</span>
+        </div>
+        <label className="block text-sm text-[#5a6b5a]">Buscar anuncios
+          <input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Título o descripción…" className={inputClass} />
+        </label>
+        {loading ? <p role="status" className="py-10 text-center text-sm text-[#5a6b5a]">Cargando anuncios…</p> : filteredNews.length === 0 ? <div className="py-10 text-center text-sm text-[#5a6b5a]"><ImageIcon className="mx-auto mb-3 h-8 w-8 text-[#8aaf7e]" aria-hidden="true" />{search ? "No hay anuncios que coincidan con tu búsqueda." : "Tus anuncios aparecerán aquí cuando los guardes."}</div> : (
+          <div className="mt-4 max-h-[75vh] space-y-3 overflow-y-auto pr-1">
+            {filteredNews.map((item) => (
+              <article key={item.id} className={`overflow-hidden rounded-xl border ${editingId === item.id ? "border-[#2d5a27] bg-[#edf1e8]/50" : "border-[#e5e0d8]"}`}>
+                {safeNewsUrl(item.imageUrl) && <img src={safeNewsUrl(item.imageUrl)!} alt={item.title} loading="lazy" className="h-36 w-full bg-[#f5f2ec] object-contain p-2" />}
+                <div className="p-3">
+                  <div className="mb-2 flex flex-wrap gap-2 text-xs">
+                    <span className={`rounded-full px-2 py-1 ${item.published ? "bg-emerald-50 text-emerald-800" : "bg-gray-100 text-gray-600"}`}>{item.published ? "Publicado" : "Oculto"}</span>
+                    {item.featured && <span className="rounded-full bg-amber-50 px-2 py-1 text-amber-800">Primero en el carrusel</span>}
+                  </div>
+                  <h3 className="text-sm font-semibold leading-snug text-[#1a2e1a]">{item.title}</h3>
+                  {item.summary && <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-[#5a6b5a]">{item.summary}</p>}
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button type="button" disabled={busy} onClick={() => editNews(item)} className="flex items-center gap-1 rounded-lg border border-[#e5e0d8] px-2.5 py-2 text-xs text-[#1a2e1a] hover:bg-[#edf1e8] disabled:opacity-50"><Pencil className="h-3.5 w-3.5" aria-hidden="true" />Editar</button>
+                    <button type="button" disabled={busy} onClick={() => void togglePublished(item)} className="flex items-center gap-1 rounded-lg border border-[#e5e0d8] px-2.5 py-2 text-xs text-[#1a2e1a] hover:bg-[#edf1e8] disabled:opacity-50">{item.published ? <EyeOff className="h-3.5 w-3.5" aria-hidden="true" /> : <Eye className="h-3.5 w-3.5" aria-hidden="true" />}{item.published ? "Ocultar" : "Publicar"}</button>
+                    <button type="button" disabled={busy} aria-label={`Eliminar anuncio: ${item.title}`} onClick={() => void deleteNewsItem(item)} className="ml-auto rounded-lg px-2.5 py-2 text-red-600 hover:bg-red-50 disabled:opacity-50"><Trash2 className="h-4 w-4" aria-hidden="true" /></button>
+                  </div>
+                </div>
+              </article>
             ))}
           </div>
-
-          {loading ? (
-            <div className="flex justify-center py-10">
-              <svg className="animate-spin h-6 w-6 text-[#2d5a27]" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
-              </svg>
-            </div>
-          ) : filteredNews.length === 0 ? (
-            <div className="text-center py-10 text-sm text-[#5a6b5a] font-['Inter']">
-              No hay noticias que coincidan con la búsqueda.
-            </div>
-          ) : (
-            <div className="mt-2 space-y-3 max-h-[70vh] overflow-y-auto pr-1">
-              {filteredNews.map((item) => (
-                <div
-                  key={item.id}
-                  className={`rounded-2xl border p-4 transition-all ${
-                    editingId === item.id ? "border-[#2d5a27] bg-[#edf1e8]/60" : "border-[#e5e0d8] bg-white hover:border-[#2d5a27]/30"
-                  }`}
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <span className="font-['Inter'] text-xs font-semibold px-2 py-0.5 rounded-full bg-[#f5f2ec] text-[#1a2e1a]">
-                      {item.category}
-                    </span>
-                    <div className="flex items-center gap-1">
-                      {item.featured && (
-                        <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-100 text-amber-800 font-['Inter']">
-                          Destacada
-                        </span>
-                      )}
-                      <span
-                        className={`text-[10px] font-medium px-2 py-0.5 rounded-full font-['Inter'] ${
-                          item.published
-                            ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                            : "bg-gray-100 text-gray-600 border border-gray-200"
-                        }`}
-                      >
-                        {item.published ? "Activa" : "Oculta"}
-                      </span>
-                    </div>
-                  </div>
-
-                  <h3 className="font-semibold text-[#1a2e1a] text-sm font-['Inter'] leading-snug mt-2 line-clamp-2">
-                    {item.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-[#5a6b5a] font-['Inter'] line-clamp-2">
-                    {item.summary}
-                  </p>
-
-                  <div className="mt-3 flex gap-1.5 pt-2 border-t border-[#f0ede6]">
-                    <button
-                      type="button"
-                      onClick={() => editNews(item)}
-                      className="flex-1 rounded-xl bg-[#1a2e1a] px-3 py-1.5 text-xs text-white font-['Inter'] hover:bg-[#2d5a27] transition"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => togglePublished(item)}
-                      title={item.published ? "Ocultar de la página principal" : "Mostrar en la página principal"}
-                      className="rounded-xl border border-[#e5e0d8] px-2.5 py-1.5 text-xs text-[#5a6b5a] font-['Inter'] hover:bg-[#fafaf8]"
-                    >
-                      {item.published ? "Despublicar" : "Publicar"}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPreviewItem(item)}
-                      className="rounded-xl border border-[#e5e0d8] px-2.5 py-1.5 text-xs text-[#5a6b5a] font-['Inter'] hover:bg-[#fafaf8]"
-                    >
-                      Ver
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteNewsItem(item)}
-                      className="rounded-xl border border-red-200 px-2.5 py-1.5 text-xs text-red-600 font-['Inter'] hover:bg-red-50"
-                    >
-                      ✕
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </aside>
-      </div>
-
-      {/* Preview Modal */}
-      <AnimatePresence>
-        {previewItem && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[80] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm"
-            onClick={() => setPreviewItem(null)}
-          >
-            <motion.div
-              initial={{ scale: 0.95, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.95, opacity: 0 }}
-              className="bg-white rounded-3xl max-w-xl w-full max-h-[85vh] overflow-y-auto shadow-2xl p-6 sm:p-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-center justify-between pb-4 border-b border-[#e5e0d8]">
-                <span className="font-['Inter'] text-xs font-semibold px-3 py-1 rounded-full bg-[#1a2e1a] text-white">
-                  {previewItem.category}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => setPreviewItem(null)}
-                  className="p-1.5 rounded-full hover:bg-[#f5f2ec] text-[#5a6b5a]"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {previewItem.imageUrl && (
-                <div className="mt-4 rounded-2xl overflow-hidden aspect-[16/9] w-full bg-[#f5f2ec]">
-                  <img
-                    src={previewItem.imageUrl}
-                    alt={previewItem.title}
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-
-              <h2 className="font-['Playfair_Display'] text-2xl sm:text-3xl text-[#1a2e1a] font-bold mt-4 leading-tight">
-                {previewItem.title}
-              </h2>
-
-              <p className="font-['Inter'] text-sm text-[#1a2e1a]/80 font-medium mt-3 leading-relaxed">
-                {previewItem.summary}
-              </p>
-
-              {previewItem.content && (
-                <div className="font-['Inter'] text-sm text-[#5a6b5a] mt-4 leading-relaxed whitespace-pre-line border-t border-[#f0ede6] pt-4">
-                  {previewItem.content}
-                </div>
-              )}
-
-              <div className="mt-6 pt-4 border-t border-[#e5e0d8] flex flex-wrap items-center justify-between gap-3">
-                <span className="text-xs text-[#5a6b5a] font-['Inter']">
-                  Fecha: {new Date(previewItem.publishedAt).toLocaleDateString("es-MX", {
-                    day: "numeric",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </span>
-                {previewItem.linkUrl && (
-                  <a
-                    href={previewItem.linkUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-full bg-[#1a2e1a] px-4 py-2 text-xs font-medium text-white font-['Inter'] hover:bg-[#2d5a27]"
-                  >
-                    {previewItem.linkText || "Más información"} →
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
         )}
-      </AnimatePresence>
-    </>
+      </aside>
+
+      <Dialog.Root open={previewOpen} onOpenChange={setPreviewOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 z-[80] bg-black/55 backdrop-blur-sm" />
+          <Dialog.Content onCloseAutoFocus={(event) => { event.preventDefault(); previewTrigger.current?.focus(); }} className="fixed left-1/2 top-1/2 z-[81] max-h-[90dvh] w-[calc(100%-2rem)] max-w-5xl -translate-x-1/2 -translate-y-1/2 overflow-y-auto rounded-2xl bg-[#f5f2ec] shadow-2xl">
+            <div className="border-b border-[#e5e0d8] px-5 py-4 pr-16">
+              <Dialog.Title className="font-['Inter'] text-lg font-semibold text-[#1a2e1a]">Vista previa del anuncio</Dialog.Title>
+              <Dialog.Description className="mt-1 font-['Inter'] text-sm text-[#5a6b5a]">Así aparecerá en el carrusel cuando lo publiques.</Dialog.Description>
+            </div>
+            <Dialog.Close aria-label="Cerrar vista previa" className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full text-[#1a2e1a] hover:bg-[#e5e0d8]"><X className="h-5 w-5" /></Dialog.Close>
+            <NewsSection news={[previewItem]} />
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
+    </div>
   );
 }

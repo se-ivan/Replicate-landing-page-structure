@@ -179,7 +179,7 @@ export function AdminDashboard() {
           {[
             { id: "appointments", label: "Citas" },
             { id: "articles", label: "Artículos" },
-            { id: "news", label: "Noticias" },
+            { id: "news", label: "Anuncios" },
           ].map((item) => (
             <button
               key={item.id}

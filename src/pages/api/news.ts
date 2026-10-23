@@ -3,7 +3,7 @@ import type { APIRoute } from "astro";
 import { getSession } from "auth-astro/server";
 import { getNews, getPublishedNews, upsertNews, validateNews } from "../../lib/news";
 
-const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
+const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" };
 
 export const GET: APIRoute = async ({ request }) => {
   const url = new URL(request.url);
@@ -17,11 +17,13 @@ export const GET: APIRoute = async ({ request }) => {
         headers: JSON_HEADERS,
       });
     }
-    const news = await getNews(true);
-    return new Response(JSON.stringify(news), {
-      status: 200,
-      headers: JSON_HEADERS,
-    });
+    try {
+      const news = await getNews(true);
+      return new Response(JSON.stringify(news), { status: 200, headers: JSON_HEADERS });
+    } catch (error) {
+      console.error("Error al cargar los anuncios", error);
+      return new Response(JSON.stringify({ error: "No se pudieron cargar los anuncios." }), { status: 500, headers: JSON_HEADERS });
+    }
   }
 
   const news = await getPublishedNews();
@@ -57,8 +59,8 @@ export const POST: APIRoute = async ({ request }) => {
       headers: JSON_HEADERS,
     });
   } catch (error) {
-    console.error("Error al guardar la noticia", error);
-    return new Response(JSON.stringify({ error: "Error al guardar la noticia." }), {
+    console.error("Error al guardar el anuncio", error);
+    return new Response(JSON.stringify({ error: "No se pudo guardar el anuncio. Inténtalo de nuevo." }), {
       status: 500,
       headers: JSON_HEADERS,
     });
