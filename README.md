@@ -17,6 +17,8 @@ La carga utiliza el mismo Firebase Storage de los artículos y requiere `FIREBAS
 
 En desarrollo, sin `DATABASE_URL`, se usan anuncios de muestra y los cambios duran solamente mientras el servidor esté activo. En producción, guardar, ocultar y eliminar requieren una conexión funcional a la base de datos.
 
+La sección **Noticias y anuncios** permanece visible debajo del hero aunque no haya publicaciones activas. En ese caso muestra un mensaje de próximas noticias; al publicar un anuncio, ese mensaje se sustituye por el carrusel.
+
 Para verificar el entorno de despliegue, `npm run verify:announcements` revisa el esquema y el historial de migraciones sin mostrar credenciales ni registros de usuarios. `npm run verify:announcements -- --smoke` comprueba además el guardado de un anuncio oculto y la subida y descarga de una imagen en Firebase; al terminar elimina esos datos temporales. Ejecuta esa comprobación en el entorno que ya tenga las credenciales configuradas.
 
 En una base de producción con su historial de Prisma ya inicializado, `npm run verify:announcements -- --migrate --smoke` aplica primero las migraciones pendientes, usando una conexión directa cuando la base está en Neon, y después ejecuta las comprobaciones. Si falta el historial, se detiene para evitar aplicar migraciones sobre una base sin revisar.

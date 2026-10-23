@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { ArrowUpRight, ChevronLeft, ChevronRight, ImageIcon, Maximize2, X } from "lucide-react";
+import { ArrowUpRight, ChevronLeft, ChevronRight, ImageIcon, Maximize2, Newspaper, X } from "lucide-react";
 import { defaultNews, safeNewsUrl, type NewsItem } from "../../data/news";
 
 type Props = {
@@ -52,9 +52,7 @@ export function NewsSection({ news = defaultNews }: Props) {
     };
   }, [api, onSelect]);
 
-  if (items.length === 0) return null;
-
-  const currentIndex = Math.min(selectedIndex, items.length - 1);
+  const currentIndex = Math.max(0, Math.min(selectedIndex, items.length - 1));
   const selectedLink = safeNewsUrl(selectedNews?.linkUrl);
   const arrowClass = "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#d7dcd1] bg-white text-[#1a2e1a] transition hover:bg-[#edf1e8] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]";
 
@@ -64,7 +62,7 @@ export function NewsSection({ news = defaultNews }: Props) {
         <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <p className="mb-2 font-['Inter'] text-xs font-semibold uppercase tracking-[1.8px] text-[#5a6b5a]">Mantente al día</p>
-            <h2 id="announcements-title" className="font-['Playfair_Display'] text-3xl font-medium text-[#1a2e1a] sm:text-4xl">Anuncios y actividades</h2>
+            <h2 id="announcements-title" className="font-['Playfair_Display'] text-3xl font-medium text-[#1a2e1a] sm:text-4xl">Noticias y anuncios</h2>
           </div>
           {items.length > 1 && (
             <div className="flex gap-2">
@@ -74,71 +72,81 @@ export function NewsSection({ news = defaultNews }: Props) {
           )}
         </div>
 
-        <div
-          role="region"
-          aria-roledescription="carrusel"
-          aria-label="Anuncios de Plenitud Emocional"
-          tabIndex={items.length > 1 ? 0 : undefined}
-          className="rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]"
-          onKeyDown={(event) => {
-            if (event.target !== event.currentTarget) return;
-            if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
-              event.preventDefault();
-              if (event.key === "ArrowLeft") api?.scrollPrev();
-              else api?.scrollNext();
-            }
-          }}
-        >
-          <div ref={carouselRef} className="overflow-hidden rounded-2xl border border-[#e5e0d8] bg-white">
-            <div className="flex touch-pan-y">
-              {items.map((item, index) => {
-                const link = safeNewsUrl(item.linkUrl);
-                return (
-                  <article
-                    key={item.id}
-                    role="group"
-                    aria-roledescription="diapositiva"
-                    aria-label={`${index + 1} de ${items.length}: ${item.title}`}
-                    aria-hidden={index !== currentIndex}
-                    className="min-w-0 flex-[0_0_100%]"
-                  >
-                    <button
-                      type="button"
-                      onClick={(event) => { selectedTrigger.current = event.currentTarget; setSelectedNews(item); }}
-                      tabIndex={index === currentIndex ? 0 : -1}
-                      aria-label={`Ampliar anuncio: ${item.title}`}
-                      className="group relative block h-[320px] w-full cursor-zoom-in bg-[#edf0e8] p-3 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#2d5a27] sm:h-[420px] md:h-[480px] md:p-5"
-                    >
-                      <AnnouncementImage item={item} />
-                      <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full border border-[#e5e0d8] bg-white/95 px-3 py-2 font-['Inter'] text-xs text-[#1a2e1a] shadow-sm"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" /> Ampliar</span>
-                    </button>
-                    <div className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
-                      <div className="min-w-0">
-                        <h3 className="break-words font-['Inter'] text-lg font-semibold leading-snug text-[#1a2e1a]">{item.title}</h3>
-                        {item.summary && <p className="mt-2 line-clamp-2 break-words font-['Inter'] text-sm leading-relaxed text-[#5a6b5a]">{item.summary}</p>}
-                      </div>
-                      {link && (
-                        <a href={link} tabIndex={index === currentIndex ? 0 : -1} target={link.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full bg-[#1a2e1a] px-5 py-3 font-['Inter'] text-sm font-medium text-white transition hover:bg-[#2d5a27] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]">
-                          {item.linkText || "Más información"}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
-                        </a>
-                      )}
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
+        {items.length === 0 ? (
+          <div className="flex min-h-56 flex-col items-center justify-center rounded-2xl border border-[#e5e0d8] bg-white px-6 py-10 text-center sm:py-12">
+            <span className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-[#edf0e8] text-[#2d5a27]">
+              <Newspaper className="h-6 w-6" aria-hidden="true" />
+            </span>
+            <h3 className="font-['Inter'] text-lg font-semibold text-[#1a2e1a]">Próximamente, más noticias</h3>
+            <p className="mt-2 max-w-md font-['Inter'] text-sm leading-relaxed text-[#5a6b5a]">Aquí compartiremos talleres, actividades y avisos para nuestra comunidad.</p>
           </div>
-          {items.length > 1 && (
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-1">
-              {items.map((item, index) => (
-                <button type="button" key={item.id} onClick={() => api?.scrollTo(index)} aria-label={`Ir al anuncio ${index + 1}: ${item.title}`} aria-current={index === currentIndex ? "true" : undefined} className="flex h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#2d5a27]">
-                  <span className={`h-2 rounded-full transition-all motion-reduce:transition-none ${index === currentIndex ? "w-6 bg-[#2d5a27]" : "w-2 bg-[#b9c3b4]"}`} />
-                </button>
-              ))}
-              <p aria-live="polite" aria-atomic="true" className="ml-3 font-['Inter'] text-xs text-[#5a6b5a]">{currentIndex + 1} / {items.length}</p>
+        ) : (
+          <div
+            role="region"
+            aria-roledescription="carrusel"
+            aria-label="Anuncios de Plenitud Emocional"
+            tabIndex={items.length > 1 ? 0 : undefined}
+            className="rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]"
+            onKeyDown={(event) => {
+              if (event.target !== event.currentTarget) return;
+              if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+                event.preventDefault();
+                if (event.key === "ArrowLeft") api?.scrollPrev();
+                else api?.scrollNext();
+              }
+            }}
+          >
+            <div ref={carouselRef} className="overflow-hidden rounded-2xl border border-[#e5e0d8] bg-white">
+              <div className="flex touch-pan-y">
+                {items.map((item, index) => {
+                  const link = safeNewsUrl(item.linkUrl);
+                  return (
+                    <article
+                      key={item.id}
+                      role="group"
+                      aria-roledescription="diapositiva"
+                      aria-label={`${index + 1} de ${items.length}: ${item.title}`}
+                      aria-hidden={index !== currentIndex}
+                      className="min-w-0 flex-[0_0_100%]"
+                    >
+                      <button
+                        type="button"
+                        onClick={(event) => { selectedTrigger.current = event.currentTarget; setSelectedNews(item); }}
+                        tabIndex={index === currentIndex ? 0 : -1}
+                        aria-label={`Ampliar anuncio: ${item.title}`}
+                        className="group relative block h-[320px] w-full cursor-zoom-in bg-[#edf0e8] p-3 focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-[#2d5a27] sm:h-[420px] md:h-[480px] md:p-5"
+                      >
+                        <AnnouncementImage item={item} />
+                        <span className="absolute bottom-3 right-3 flex items-center gap-1.5 rounded-full border border-[#e5e0d8] bg-white/95 px-3 py-2 font-['Inter'] text-xs text-[#1a2e1a] shadow-sm"><Maximize2 className="h-3.5 w-3.5" aria-hidden="true" /> Ampliar</span>
+                      </button>
+                      <div className="flex flex-col justify-between gap-4 p-5 sm:flex-row sm:items-center sm:p-6">
+                        <div className="min-w-0">
+                          <h3 className="break-words font-['Inter'] text-lg font-semibold leading-snug text-[#1a2e1a]">{item.title}</h3>
+                          {item.summary && <p className="mt-2 line-clamp-2 break-words font-['Inter'] text-sm leading-relaxed text-[#5a6b5a]">{item.summary}</p>}
+                        </div>
+                        {link && (
+                          <a href={link} tabIndex={index === currentIndex ? 0 : -1} target={link.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" className="inline-flex shrink-0 items-center justify-center gap-2 self-start rounded-full bg-[#1a2e1a] px-5 py-3 font-['Inter'] text-sm font-medium text-white transition hover:bg-[#2d5a27] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#2d5a27]">
+                            {item.linkText || "Más información"}<ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+                          </a>
+                        )}
+                      </div>
+                    </article>
+                  );
+                })}
+              </div>
             </div>
-          )}
-        </div>
+            {items.length > 1 && (
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-1">
+                {items.map((item, index) => (
+                  <button type="button" key={item.id} onClick={() => api?.scrollTo(index)} aria-label={`Ir al anuncio ${index + 1}: ${item.title}`} aria-current={index === currentIndex ? "true" : undefined} className="flex h-11 min-w-9 items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-[#2d5a27]">
+                    <span className={`h-2 rounded-full transition-all motion-reduce:transition-none ${index === currentIndex ? "w-6 bg-[#2d5a27]" : "w-2 bg-[#b9c3b4]"}`} />
+                  </button>
+                ))}
+                <p aria-live="polite" aria-atomic="true" className="ml-3 font-['Inter'] text-xs text-[#5a6b5a]">{currentIndex + 1} / {items.length}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <Dialog.Root open={Boolean(selectedNews)} onOpenChange={(open) => { if (!open) setSelectedNews(null); }}>
