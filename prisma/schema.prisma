@@ -81,3 +81,21 @@ model News {
   @@index([featured])
 }
 
+model EventPhoto {
+  id            String   @id @default(uuid())
+  title         String   @default("")
+  eventName     String   @default("")
+  caption       String   @default("")
+  imageUrl      String
+  featured      Boolean  @default(false)
+  published     Boolean  @default(true)
+  takenAt       DateTime @default(now())
+  creadoEn      DateTime @default(now())
+  actualizadoEn DateTime @updatedAt
+
+  @@index([creadoEn])
+  @@index([published])
+  @@index([takenAt])
+  @@index([featured])
+}
+

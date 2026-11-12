@@ -1,7 +1,9 @@
 ---
+import { getSession } from "auth-astro/server";
 import App from "../app/App";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { getArticlesForExactAudience } from "../lib/articles";
+import { getPublishedGalleryPhotos } from "../lib/gallery";
 import { getPublishedNews } from "../lib/news";
 import { articles as defaultArticles } from "../data/articles";
 
@@ -13,6 +15,14 @@ const homeArticles = import.meta.env.DEV && !import.meta.env.DATABASE_URL
   : await getArticlesForExactAudience("ambos");
 const articles = homeArticles.slice(0, 4);
 const news = await getPublishedNews();
+const galleryPhotos = await getPublishedGalleryPhotos();
+let isAdmin = false;
+try {
+  const session = await getSession(Astro.request);
+  isAdmin = Boolean(session?.user);
+} catch {
+  isAdmin = false;
+}
 ---
 
 <BaseLayout
@@ -21,5 +31,5 @@ const news = await getPublishedNews();
   keywords="plenitud emocional, acompañamiento legal o psicologico para adultos mayores, psicologos adultos mayores morelia, abogados adultos mayores, plenitudemocional.com, acompañamiento emocional, jubilacion activa"
   image="/images/hero/hero-bg.jpg"
 >
-  <App articles={articles} news={news} client:load />
+  <App articles={articles} news={news} galleryPhotos={galleryPhotos} isAdmin={isAdmin} client:load />
 </BaseLayout>

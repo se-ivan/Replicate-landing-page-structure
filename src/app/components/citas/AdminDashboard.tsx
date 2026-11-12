@@ -13,6 +13,7 @@ import {
 } from "date-fns";
 import { es } from "date-fns/locale";
 import { ArticleManager } from "./ArticleManager";
+import { GalleryManager } from "./GalleryManager";
 import { NewsManager } from "./NewsManager";
 
 interface Appointment {
@@ -65,7 +66,7 @@ function sortByTime(a: Appointment, b: Appointment) {
 }
 
 export function AdminDashboard() {
-  const [activeView, setActiveView] = useState<"appointments" | "articles" | "news">("appointments");
+  const [activeView, setActiveView] = useState<"appointments" | "articles" | "news" | "gallery">("appointments");
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<string>("todos");
@@ -73,6 +74,13 @@ export function AdminDashboard() {
   const [selected, setSelected] = useState<Appointment | null>(null);
   const [calendarMonth, setCalendarMonth] = useState(() => startOfMonth(new Date()));
   const [selectedDate, setSelectedDate] = useState(() => getDateKey(new Date()));
+
+  useEffect(() => {
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    if (tab === "galeria" || tab === "gallery") setActiveView("gallery");
+    else if (tab === "anuncios" || tab === "news") setActiveView("news");
+    else if (tab === "articulos" || tab === "articles") setActiveView("articles");
+  }, []);
 
   const fetchAppointments = async () => {
     try {
@@ -180,10 +188,11 @@ export function AdminDashboard() {
             { id: "appointments", label: "Citas" },
             { id: "articles", label: "Artículos" },
             { id: "news", label: "Anuncios" },
+            { id: "gallery", label: "Galería" },
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveView(item.id as "appointments" | "articles" | "news")}
+              onClick={() => setActiveView(item.id as "appointments" | "articles" | "news" | "gallery")}
               className={`px-4 py-2.5 rounded-xl text-sm font-['Inter'] font-medium transition-all ${
                 activeView === item.id
                   ? "bg-[#1a2e1a] text-white shadow-lg"
@@ -199,6 +208,8 @@ export function AdminDashboard() {
           <ArticleManager />
         ) : activeView === "news" ? (
           <NewsManager />
+        ) : activeView === "gallery" ? (
+          <GalleryManager />
         ) : (
           <>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">

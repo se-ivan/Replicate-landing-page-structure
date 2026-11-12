@@ -41,13 +41,14 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
           }`}
         />
       </div>
-      <div className="hidden md:flex items-center gap-8 text-sm font-['Inter']">
+      <div className="hidden md:flex items-center gap-5 lg:gap-7 text-sm font-['Inter']">
         <a href={sectionHref("#inicio")} className="opacity-80 hover:opacity-100">Inicio</a>
         <a href={sectionHref("#noticias")} className="opacity-80 hover:opacity-100">Noticias</a>
         <a href={sectionHref("#quienes-somos")} className="opacity-80 hover:opacity-100">Quiénes Somos</a>
         <a href={sectionHref("#servicios")} className="opacity-80 hover:opacity-100">Servicios</a>
         <a href="/psicologia" className="opacity-80 hover:opacity-100">Psicología</a>
         <a href="/abogados" className="opacity-80 hover:opacity-100">Abogados</a>
+        <a href={sectionHref("#galeria")} className="opacity-80 hover:opacity-100">Galería</a>
         <a href={blogHref} className="opacity-80 hover:opacity-100">Blog</a>
         <a href={sectionHref("#contacto")} className="opacity-80 hover:opacity-100">Contacto</a>
       </div>
@@ -90,6 +91,7 @@ export function Navbar({ sectionPrefix = "" }: NavbarProps) {
           <a href={sectionHref("#servicios")} onClick={() => setOpen(false)}>Servicios</a>
           <a href="/psicologia" onClick={() => setOpen(false)}>Psicología</a>
           <a href="/abogados" onClick={() => setOpen(false)}>Abogados</a>
+          <a href={sectionHref("#galeria")} onClick={() => setOpen(false)}>Galería</a>
           <a href={blogHref} onClick={() => setOpen(false)}>Blog</a>
           <a href={sectionHref("#contacto")} onClick={() => setOpen(false)}>Contacto</a>
           <a href="/agendar" onClick={() => setOpen(false)}>Agendar Cita</a>

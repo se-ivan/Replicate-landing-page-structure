@@ -69,6 +69,11 @@ export function Footer({ sectionPrefix = "" }: FooterProps) {
                 </a>
               </li>
               <li>
+                <a href={sectionHref("#galeria")} className="hover:text-white transition">
+                  Galería de eventos
+                </a>
+              </li>
+              <li>
                 <a href="/articulos" className="hover:text-white transition">
                   Blog y Artículos
                 </a>
